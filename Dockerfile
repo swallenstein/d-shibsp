@@ -1,7 +1,7 @@
 FROM centos:centos7
 MAINTAINER r2h2 <rainer@hoerbe.at>   # credits to John Gasper <jtgasper3@gmail.com>
 
-RUN yum -y install curl httpd ip lsof mod_php net-tools
+RUN yum -y install curl httpd ip lsof mod_php mod_ssl net-tools
 COPY resources/security:shibboleth.repo /etc/yum.repos.d
 
 # prevent yum to create default uid for shibd to control user mapping between host and container
@@ -25,3 +25,4 @@ RUN groupadd --gid $HTTPDUID $HTTPDUSER \
 
 COPY resources/start.sh /
 RUN chmod +x /start.sh
+RUN echo "users in this image: $SHIBDUID ($SHIBDUSER), $HTTPDUID ($HTTPDUSER)"

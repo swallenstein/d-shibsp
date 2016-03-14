@@ -1,29 +1,31 @@
 #!/usr/bin/env bash
 
+# data shared between containers goes via these definitions:
+dockervol_root='/docker_volumes'
+shareddata_root="${dockervol_root}/1shared_data"
+
 # configure container
-export IMGID='5'  # range from 1 .. 99; must be unique
-export IMAGENAME="r2h2/shib${IMGID}"
-export CONTAINERNAME="${IMGID}sp1TestWpv"
+export IMGID='8'  # range from 1 .. 99; must be unique
+export IMAGENAME="r2h2/shibsp${IMGID}"
+export CONTAINERNAME="${IMGID}sp2TestWpv"
 export CONTAINERUSER='0'  # run container with root, transition to non-root handled by daemons
 export SHIBDUSER="shibd${IMGID}"
 export SHIBDUID="800${IMGID}"
 export HTTPDUSER="httpd${IMGID}"
 export HTTPDUID="900${IMGID}"
-export ENVSETTINGS="
-    -e FREQUENCY=600
-    -e LOGDIR=/var/log
-    -e LOGLEVEL=INFO
-    -e PIDFILE=/var/log/pyffd.pid
-    -e PIPELINEBATCH=/etc/pyff/md_aggregator.fd
-    -e PIPELINEDAEMON=/etc/pyff/mdx_disco.fd
+export BUILDARGS="
+    --build-arg "SHIBDUSER=$SHIBDUSER" \
+    --build-arg "SHIBDUID=$SHIBDUID" \
+    --build-arg "HTTPDUSER=$HTTPDUSER" \
+    --build-arg "HTTPDUID=$HTTPDUID" \
 "
+export ENVSETTINGS=""
 export NETWORKSETTINGS="
-    -p 7080:8080
-    -p 7443:8443
     --net http_proxy
     --ip 10.1.1.${IMGID}
+    -p 4443:443
 "
-export VOLROOT="/docker_volumes/$CONTAINERNAME"  # container volumes on docker host
+export VOLROOT="$dockervol_root/$CONTAINERNAME"  # container volumes on docker host
 # mounting var/lock/.., var/run to get around permission problems when starting non-root
 export VOLMAPPING="
     -v $VOLROOT/etc/pki:/etc/pki:Z
@@ -32,7 +34,8 @@ export VOLMAPPING="
     -v $VOLROOT/var/lock/shibboleth:/var/lock/shibboleth:Z
     -v $VOLROOT/var/lock/subsys:/var/lock/subsys:Z
     -v $VOLROOT/var/log/:/var/log:Z
-    -v $VOLROOT/var/www/sp1TestWpvPortalverbundAt:/var/www/sp1TestWpvPortalverbundAt:Z
+    -v $VOLROOT/var/www/sp2TestWpvPortalverbundAt:/var/www/sp2TestWpvPortalverbundAt:Z
+    -v $shareddata_root/md_feed:/opt/md_feed:ro
 "
 export STARTCMD='/start.sh' # run1.sh starts the container with shibd
 
@@ -60,4 +63,4 @@ chkdir var/lock/shibboleth $SHIBDUSER
 chkdir var/lock/subsys $SHIBDUSER
 chkdir var/log/shibboleth $SHIBDUSER
 rm -f $VOLROOT/var/run/shibboleth/shibd.sock
-chkdir var/www/sp1TestWpvPortalverbundAt/html
+chkdir var/www/sp2TestWpvPortalverbundAt/html
