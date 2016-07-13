@@ -40,21 +40,30 @@ export VOLMAPPING="
 export STARTCMD='/start.sh' # run1.sh starts the container with shibd
 
 # first start: create user/group/host directories
+if [ $(id -u) -ne 0 ]; then
+    sudo="sudo"
+fi
+
 if ! id -u $SHIBDUSER &>/dev/null; then
-    groupadd -g $SHIBDUID $SHIBDUSER
-    adduser -M -g $SHIBDUID -u $SHIBDUID $SHIBDUSER
+    $sudo groupadd -g $SHIBDUID $SHIBDUSER
+    $sudo adduser -M --gid $SHIBDUID --uid $SHIBDUID $SHIBDUSER  #CentOS
+    #$sudo adduser --gid SHIBDUID --disabled-password --gecos "" --uid SHIBDUID SHIBDUSER #Debian
 fi
 if ! id -u $HTTPDUSER &>/dev/null; then
-    groupadd -g $HTTPDUID $HTTPDUSER
-    adduser -M -g $HTTPDUID -u $HTTPDUID $HTTPDUSER
+    $sudo groupadd -g $HTTPDUID $HTTPDUSER
+    $sudo adduser -M --gid $HTTPDUID --uid $HTTPDUID $HTTPDUSER  #CentOS
+    #$sudo adduser --gid HTTPDUID --disabled-password --gecos "" --uid HTTPDUID HTTPDUSER #Debian
 fi
+
 # create dir with given user if not existing, relative to $HOSTVOLROOT
 function chkdir {
     dir=$1
     user=$2
-    mkdir -p "$VOLROOT/$dir"
-    chown -R $user:$user "$VOLROOT/$dir"
+    $sudo mkdir -p "$VOLROOT/$dir"
+    $sudo chown -R $user:$user "$VOLROOT/$dir"
 }
+
+
 chkdir etc/pki $HTTPDUSER
 chkdir etc/httpd $HTTPDUSER
 chkdir etc/shibboleth $SHIBDUSER
@@ -62,5 +71,5 @@ chkdir var/log/httpd $HTTPDUSER
 chkdir var/lock/shibboleth $SHIBDUSER
 chkdir var/lock/subsys $SHIBDUSER
 chkdir var/log/shibboleth $SHIBDUSER
-rm -f $VOLROOT/var/run/shibboleth/shibd.sock
+$sudo rm -f $VOLROOT/var/run/shibboleth/shibd.sock
 chkdir var/www/sp2TestWpvPortalverbundAt/html
