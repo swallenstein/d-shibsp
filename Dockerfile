@@ -9,7 +9,7 @@ ARG SHIBDUSER
 ARG SHIBDUID
 RUN groupadd --gid $SHIBDUID $SHIBDUSER \
  && adduser --gid $SHIBDUID --uid $SHIBDUID $SHIBDUSER \
- && yum -y install shibboleth.x86_64 \
+ && yum -y install shibboleth.x86_64 shibboleth-embedded-ds \
  && yum -y clean all
 
 RUN chmod +x /etc/shibboleth/shibd-redhat
