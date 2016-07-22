@@ -1,18 +1,19 @@
 #!/usr/bin/env bash
 
-# data shared between containers goes via these definitions:
 dockervol_root='/docker_volumes'
-shareddata_root="${dockervol_root}/1shared_data"
+
+# data shared between containers goes via these definitions:
+shareddata_root="${dockervol_root}/01shared_data"
 
 # configure container
-export IMGID='8'  # range from 1 .. 99; must be unique
+export IMGID='08'  # range from 02 .. 99; must be unique
 export IMAGENAME="r2h2/shibsp${IMGID}"
-export CONTAINERNAME="${IMGID}sp2TestWpv"
+export CONTAINERNAME="${IMGID}shibsp"
 export CONTAINERUSER='0'  # run container with root, transition to non-root handled by daemons
 export SHIBDUSER="shibd${IMGID}"
-export SHIBDUID="800${IMGID}"
+export SHIBDUID="80${IMGID}"
 export HTTPDUSER="httpd${IMGID}"
-export HTTPDUID="900${IMGID}"
+export HTTPDUID="90${IMGID}"
 export BUILDARGS="
     --build-arg "SHIBDUSER=$SHIBDUSER" \
     --build-arg "SHIBDUID=$SHIBDUID" \
@@ -21,7 +22,7 @@ export BUILDARGS="
 "
 export ENVSETTINGS=""
 export NETWORKSETTINGS="
-    --net http_proxy
+    --net dockernet
     --ip 10.1.1.${IMGID}
     -p 4443:443
 "
@@ -34,7 +35,7 @@ export VOLMAPPING="
     -v $VOLROOT/var/lock/shibboleth:/var/lock/shibboleth:Z
     -v $VOLROOT/var/lock/subsys:/var/lock/subsys:Z
     -v $VOLROOT/var/log/:/var/log:Z
-    -v $VOLROOT/var/www/sp2TestWpvPortalverbundAt:/var/www/sp2TestWpvPortalverbundAt:Z
+    -v $VOLROOT/var/www/sp2TestWpvPortalverbundAt:/var/www/testsp01SamltestFed-labOrg:Z
     -v $shareddata_root/md_feed:/opt/md_feed:ro
 "
 export STARTCMD='/start.sh' # run1.sh starts the container with shibd
@@ -71,5 +72,5 @@ chkdir var/log/httpd $HTTPDUSER
 chkdir var/lock/shibboleth $SHIBDUSER
 chkdir var/lock/subsys $SHIBDUSER
 chkdir var/log/shibboleth $SHIBDUSER
+chkdir var/www/testsp01SamltestFed-labOrg/html
 $sudo rm -f $VOLROOT/var/run/shibboleth/shibd.sock
-chkdir var/www/sp2TestWpvPortalverbundAt/html
