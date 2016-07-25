@@ -12,4 +12,4 @@ SHIBSP_PREFIX=/opt/etc/shibboleth
 
 # Apache dislikes pre-existing PID files
 rm -f /var/logs/httpd.pid
-httpd -DFOREGROUND -d serverroot /opt/etc/httpd/ -f conf/httpd.conf
+httpd -DFOREGROUND -d /opt/etc/httpd/ -f conf/httpd.conf
