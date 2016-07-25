@@ -48,12 +48,12 @@ fi
 if ! id -u $SHIBDUSER &>/dev/null; then
     $sudo groupadd -g $SHIBDUID $SHIBDUSER
     $sudo adduser -M --gid $SHIBDUID --uid $SHIBDUID $SHIBDUSER  #CentOS
-    #$sudo adduser --gid SHIBDUID --disabled-password --gecos "" --uid SHIBDUID SHIBDUSER #Debian
+    #$sudo adduser --gid SHIBDUID --disabled-password --gecos "" --uid $SHIBDUID $SHIBDUSER #Debian
 fi
 if ! id -u $HTTPDUSER &>/dev/null; then
     $sudo groupadd -g $HTTPDUID $HTTPDUSER
     $sudo adduser -M --gid $HTTPDUID --uid $HTTPDUID $HTTPDUSER  #CentOS
-    #$sudo adduser --gid HTTPDUID --disabled-password --gecos "" --uid HTTPDUID HTTPDUSER #Debian
+    #$sudo adduser --gid HTTPDUID --disabled-password --gecos "" --uid $HTTPDUID $HTTPDUSER #Debian
 fi
 
 # create dir with given user if not existing, relative to $HOSTVOLROOT
