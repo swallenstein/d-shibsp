@@ -40,5 +40,6 @@ create container:
 - To copy the default configuration there are 2 options:
   -- start the container with a shell and `cp -pr /etc/shibboleth /opt/etc/`, or
   -- copy the configuration from a template you have from somewhere else 
+- Set the SHIBD_USER in /opt/etc/shibboleth/shib-redhat to that defined in conf*.sh 
 - Check/modify the config files in /opt/etc/shibboleth according to the documentation, optionally
   create new keys and metadata (keygen.sh, metagen.sh)
