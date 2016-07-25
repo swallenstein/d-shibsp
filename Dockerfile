@@ -1,8 +1,10 @@
-FROM centos:centos7
+#FROM centos:centos7
+#RUN yum -y install curl httpd ip lsof mod_php mod_ssl net-tools
+#COPY install/security:shibboleth.repo /etc/yum.repos.d
+# above command cannot be executed on a system with --storage-opt=AUFS
+FROM rhoerbe/shib-spbase
 MAINTAINER r2h2 <rainer@hoerbe.at>   # credits to John Gasper <jtgasper3@gmail.com>
 
-RUN yum -y install curl httpd ip lsof mod_php mod_ssl net-tools
-COPY install/security:shibboleth.repo /etc/yum.repos.d
 
 RUN echo $'export LD_LIBRARY_PATH=/opt/shibboleth/lib64:$LD_LIBRARY_PATH\n' > /etc/sysconfig/shibd \
  && chmod +x /etc/sysconfig/shibd
