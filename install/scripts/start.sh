@@ -8,7 +8,7 @@ if [ $(id -u) -ne 0 ]; then
 fi
 
 SHIBSP_PREFIX=/opt/etc/shibboleth
-/etc/shibboleth/shibd-redhat start
+$SHIBSP_PREFIX/shibd-redhat start
 
 # Apache dislikes pre-existing PID files
 rm -f /var/logs/httpd.pid
