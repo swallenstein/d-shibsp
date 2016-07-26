@@ -35,11 +35,13 @@ create container:
 
 
 ## Shibboleth SP Configuration
-- The default shibd configuration is created in /etc/shibboleth during docker build, whereas /start.sh will
-  change the ServerRoot to /opt/etc/shibboleth.
+- The default shibd configuration is created in /etc/shibboleth during docker build
+- The shibd config directory should be different to /etc/shibboleth; however due to an issue with shibd
+  (https://issues.shibboleth.net/jira/browse/SSPCPP-709) this does not work. Thererfore, /etc/shibboleth is
+  a docker volume external to the container, overwriting the defaults genrated during installation. 
 - To copy the default configuration there are 2 options:
-  -- start the container with a shell and `cp -pr /etc/shibboleth /opt/etc/`, or
+  -- start the container without the volume mapping for /etc/shibboleth and copy the contents to a temporary location, or
   -- copy the configuration from a template you have from somewhere else 
 - Set the SHIBD_USER in /opt/etc/shibboleth/shib-redhat to that defined in conf*.sh 
-- Check/modify the config files in /opt/etc/shibboleth according to the documentation, optionally
+- Check/modify the config files in /etc/shibboleth according to the documentation, optionally
   create new keys and metadata (keygen.sh, metagen.sh)

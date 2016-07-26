@@ -7,7 +7,8 @@ if [ $(id -u) -ne 0 ]; then
     exit 1
 fi
 
-SHIBSP_PREFIX=/opt/etc/shibboleth
+#SHIBSP_PREFIX=/opt/etc/shibboleth
+SHIBSP_PREFIX=/etc/shibboleth
 $SHIBSP_PREFIX/shibd-redhat start
 
 # Apache dislikes pre-existing PID files
