@@ -29,8 +29,9 @@ create container:
   -- start the container with a shell and `cp -pr /etc/httpd /opt/etc/`, or
   -- copy the configuration from a template you have from somewhere else 
 - Check/modify the /opt/etc/httpd/conf.d/vhost.conf
-- Set the httpd user/group in conf/httpd.conf to that defined in conf*.sh
-
+- In conf/httpd.conf:
+  -- Set the httpd user/group to that defined in conf*.sh
+  -- Set ServerRoot to /opt/etc/httpd
 - If the apache httpd is not internet facing, setup the reverse proxy in the nginx container (optional)
 
 

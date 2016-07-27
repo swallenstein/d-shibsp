@@ -5,6 +5,8 @@
 FROM rhoerbe/shib-spbase
 MAINTAINER r2h2 <rainer@hoerbe.at>   # credits to John Gasper <jtgasper3@gmail.com>
 
+# config will be mapped into /opt/etc/httpd. Remove original dir to avoid misconfiguration
+RUN mv /etc/httpd /etc/httpd.default
 
 RUN echo $'export LD_LIBRARY_PATH=/opt/shibboleth/lib64:$LD_LIBRARY_PATH\n' > /etc/sysconfig/shibd \
  && chmod +x /etc/sysconfig/shibd
