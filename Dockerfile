@@ -10,8 +10,8 @@ MAINTAINER r2h2 <rainer@hoerbe.at>   # credits to John Gasper <jtgasper3@gmail.c
 RUN echo $'export LD_LIBRARY_PATH=/opt/shibboleth/lib64:$LD_LIBRARY_PATH\n' > /etc/sysconfig/shibd \
  && chmod +x /etc/sysconfig/shibd
 
-COPY install/scripts/start.sh /
-RUN chmod +x /start.sh
+COPY install/scripts/*.sh /
+RUN chmod +x /*.sh
 
 # prevent yum to create default uid for shibd to control user mapping between host and container
 ARG SHIBDUSER
