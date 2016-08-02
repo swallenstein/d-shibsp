@@ -36,11 +36,11 @@ shift $((OPTIND-1))
 
 function purge {
     exec="find $1 -mtime +${days} -type f -delete"
-    if [ "${verbose}" -eq "True" ]; then
+    if [ "${verbose}" = "True" ]; then
         echo ${exec}
     fi
     $exec
 }
 
-purge /var/log/idp/*
-purge /var/log/jetty/*
+purge /var/log/httpd/*
+purge /var/log/shibboleth/*
