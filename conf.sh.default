@@ -6,7 +6,7 @@ dockervol_root='/docker_volumes'
 shareddata_root="${dockervol_root}/01shared_data"
 
 # configure container
-export IMGID='08'  # range from 02 .. 99; must be unique
+IMGID='99'  # range from 02 .. 99; must be unique
 export IMAGENAME="r2h2/shibsp${IMGID}"
 export CONTAINERNAME="${IMGID}shibsp"
 export CONTAINERUSER='0'  # run container with root, transition to non-root handled by daemons
@@ -29,13 +29,12 @@ export NETWORKSETTINGS="
 export VOLROOT="$dockervol_root/$CONTAINERNAME"  # container volumes on docker host
 # mounting var/lock/.., var/run to get around permission problems when starting non-root
 export VOLMAPPING="
-    -v $VOLROOT/etc/pki:/etc/pki:Z
-    -v $VOLROOT/etc/httpd:/etc/httpd:Z
+    -v $VOLROOT/etc/pki:/etc/pki:ro
+    -v $VOLROOT/etc/httpd:/etc/httpd:ro
     -v $VOLROOT/etc/shibboleth:/etc/shibboleth:Z
-    -v $VOLROOT/var/lock/shibboleth:/var/lock/shibboleth:Z
-    -v $VOLROOT/var/lock/subsys:/var/lock/subsys:Z
+    -v $VOLROOT/var/lock/:/var/lock/:Z
     -v $VOLROOT/var/log/:/var/log:Z
-    -v $VOLROOT/var/www/sp2TestWpvPortalverbundAt:/var/www/testsp01SamltestFed-labOrg:Z
+    -v $VOLROOT/var/www/myhostMydomain:/var/www/myhostMydomain:Z
     -v $shareddata_root/md_feed:/opt/md_feed:ro
 "
 export STARTCMD='/start.sh' # run1.sh starts the container with shibd
@@ -58,19 +57,17 @@ fi
 
 # create dir with given user if not existing, relative to $HOSTVOLROOT
 function chkdir {
-    dir=$1
-    user=$2
+    dir=$1; user=$2
     $sudo mkdir -p "$VOLROOT/$dir"
     $sudo chown -R $user:$user "$VOLROOT/$dir"
 }
 
 
-chkdir etc/pki $HTTPDUSER
-chkdir etc/httpd $HTTPDUSER
 chkdir etc/shibboleth $SHIBDUSER
-chkdir var/log/httpd $HTTPDUSER
 chkdir var/lock/shibboleth $SHIBDUSER
 chkdir var/lock/subsys $SHIBDUSER
+chkdir var/log/httpd $HTTPDUSER
 chkdir var/log/shibboleth $SHIBDUSER
-chkdir var/www/testsp01SamltestFed-labOrg/html
+chkdir var/www/myhostMydomain/html
+
 $sudo rm -f $VOLROOT/var/run/shibboleth/shibd.sock
