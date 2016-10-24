@@ -12,7 +12,7 @@ fi
 # context after restarting the container. httpd and shibd won't start correctly
 # if thinking it is already running.
 SHIBDLOCKFILE=/var/lock/subsys/shibd
-HTTPDPIDFILE=/var/run/httpd.pid
+HTTPDPIDFILE=/run/httpd/httpd.pid
 rm -f $SHIBDLOCKFILE $HTTPDPIDFILE
 
 #SHIBSP_PREFIX=/opt/etc/shibboleth
