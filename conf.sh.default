@@ -27,12 +27,11 @@ export NETWORKSETTINGS="
     -p 4443:443
 "
 export VOLROOT="$dockervol_root/$CONTAINERNAME"  # container volumes on docker host
-# mounting var/lock/.., var/run to get around permission problems when starting non-root
+# not mounting var/lock/subsys to remove lockfile for container restart
 export VOLMAPPING="
     -v $VOLROOT/etc/pki:/etc/pki:ro
     -v $VOLROOT/etc/httpd:/etc/httpd:ro
     -v $VOLROOT/etc/shibboleth:/etc/shibboleth:Z
-    -v $VOLROOT/var/lock/:/var/lock/:Z
     -v $VOLROOT/var/log/:/var/log:Z
     -v $VOLROOT/var/www/myhostMydomain:/var/www/myhostMydomain:Z
     -v $shareddata_root/md_feed:/opt/md_feed:ro
@@ -64,10 +63,6 @@ function chkdir {
 
 
 chkdir etc/shibboleth $SHIBDUSER
-chkdir var/lock/shibboleth $SHIBDUSER
-chkdir var/lock/subsys $SHIBDUSER
 chkdir var/log/httpd $HTTPDUSER
 chkdir var/log/shibboleth $SHIBDUSER
 chkdir var/www/myhostMydomain/html
-
-$sudo rm -f $VOLROOT/var/run/shibboleth/shibd.sock
