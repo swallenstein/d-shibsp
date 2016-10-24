@@ -8,17 +8,17 @@ if [ $(id -u) -ne 0 ]; then
 fi
 
 
-# Make sure we're not confused by old, incompletely-shutdown shibd or httpd
-# context after restarting the container. httpd and shibd won't start correctly
-# if thinking it is already running.
-SHIBDLOCKFILE=/var/lock/subsys/shibd
-HTTPDPIDFILE=/run/httpd/httpd.pid
-rm -f $SHIBDLOCKFILE $HTTPDPIDFILE
+function cleanup {
+    # Make sure we're not confused by old, incompletely-shutdown shibd or httpd
+    # context after restarting the container. httpd and shibd won't start correctly                                                                                                                                                        # if thinking it is already running.
+    rm -f /var/lock/subsys/shibd
+    rm -f /var/run/shibboleth/shibd.*
+    rm -rf /run/httpd/*
+}
 
-#SHIBSP_PREFIX=/opt/etc/shibboleth
-SHIBSP_PREFIX=/etc/shibboleth
-$SHIBSP_PREFIX/shibd-redhat start
+cleanup
 
+/etc/shibboleth/shibd-redhat start 2>&1 > /var/log/start.log
+
+echo "starting httpd" >> /var/log/start.log
 httpd -DFOREGROUND -d /opt/etc/httpd/ -f conf/httpd.conf
-
-exit 0
