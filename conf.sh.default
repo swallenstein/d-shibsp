@@ -32,6 +32,7 @@ export VOLMAPPING="
     -v $VOLROOT/etc/pki:/etc/pki:ro
     -v $VOLROOT/etc/httpd:/etc/httpd:ro
     -v $VOLROOT/etc/shibboleth:/etc/shibboleth:Z
+    -v $VOLROOT/etc/shibboleth-ds:/etc/shibboleth-ds:Z
     -v $VOLROOT/var/log/:/var/log:Z
     -v $VOLROOT/var/www/myhostMydomain:/var/www/myhostMydomain:Z
     -v $shareddata_root/md_feed:/opt/md_feed:ro
