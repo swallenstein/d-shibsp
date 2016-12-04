@@ -76,28 +76,23 @@ set_vol_mapping() {
     create_user $HTTPDUSER $HTTPDUID
     DOCROOT='sp1ExampleOrg'
 
-    export VOLROOT="${DOCKERVOL_ROOT}/$CONTAINERNAME"  # container volumes on docker host
-    export VOLMAPPING="
-        -v $VOLROOT/etc/httpd:/opt/etc/httpd:ro
-        -v $VOLROOT/etc/shibboleth:/etc/shibboleth:Z
-        -v $VOLROOT/var/log/:/var/log:Z
-        -v $VOLROOT/var/www/$DOCROOT:/var/www/$DOCROOT:ro
-        -v $SHAREDDATA_ROOT/10pyff/md_feed:/opt/md_feed:ro
-    "
+    VOLROOT="${DOCKERVOL_ROOT}/$CONTAINERNAME"  # container volumes on docker host
+    map_volume "$VOLROOT/etc/httpd" '/opt/etc/httpd' 'ro'
+    map_volume "$VOLROOT/etc/shibboleth" '/etc/shibboleth' 'Z'
+    map_volume "$VOLROOT/var/log/" '/var/log' 'Z'
+    map_volume "$VOLROOT/var/www/$DOCROOT" "/var/www/$DOCROOT" 'ro'
+    map_volume "$SHAREDDATA_ROOT/03pyffTestWpv/md_feed" '/opt/md_feed' 'ro'
 
-    # check if required read-only directories do exist (path relative to $VOLROOT)
-    chkdir etc/httpd
-    chkdir etc/shibboleth
-    chkdir $SHAREDDATA_ROOT/03pyffTestWpv/md_feed
+    # config redirects log files from jetty standard location to linux default path
+    mkdir -p $VOLROOT/var/log/idp
+    mkdir -p $VOLROOT/var/log/jetty
+}
 
-    # create if not existing; set owner for path on docker host relative to $VOLROOT
-    createdir etc/shibboleth $SHIBDUSER
-    createdir var/log/httpd $HTTPDUSER
-    createdir var/log/shibboleth $SHIBDUSER
-    createdir var/www/$DOCROOT
 
-    $sudo mkdir -p $SHAREDDATA_ROOT/$CONTAINERNAME/www/
-    $sudo chown -R $CONTAINERUSER:$SHARED_CONTAINERS_GROUP $SHAREDDATA_ROOT/$CONTAINERNAME/www/
+map_volume() {
+    HOSTPATH=$1; CONTAINERPATH=$2; MOUNT_OPTION=$3
+    export VOLMAPPING="$VOLMAPPING -v $HOSTPATH:$CONTAINERPATH:$MOUNT_OPTION"
+    chkdir $HOSTPATH
 }
 
 
