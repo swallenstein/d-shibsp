@@ -6,9 +6,8 @@
 FROM rhoerbe/shib-spbase
 LABEL maintainer="Rainer Hörbe <r2h2@hoerbe.at>" \
       version="0.0.0" \
-      # by default, remove all capabilities. You may need to add particular ones, such as:
-      #   --cap-add=setuid --cap-add=setgid --cap-add=chown --cap-add=net_bind_service
-      capabilites='--cap-drop=all'
+      # by default, remove all capabilities, but add those required to change the user
+      capabilites='--cap-drop=all --cap-add=setuid --cap-add=setgid --cap-add=chown'
 
 # allow build behind firewall
 ARG HTTPS_PROXY=''
@@ -52,7 +51,7 @@ RUN chmod +x /*.sh
 
 CMD /start.sh
 
-VOLUME /etc/httpd
-VOLUME /etc/shibboleth
-VOLUME /var/log
-VOLUME /var/www
+VOLUME /etc/httpd \
+       /etc/shibboleth \
+       /var/log \
+       /var/www
