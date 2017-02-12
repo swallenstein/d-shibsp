@@ -16,10 +16,6 @@ ARG HTTPS_PROXY=''
 RUN echo $'export LD_LIBRARY_PATH=/opt/shibboleth/lib64:$LD_LIBRARY_PATH\n' > /etc/sysconfig/shibd \
  && chmod +x /etc/sysconfig/shibd
 
-COPY install/scripts/*.sh /
-RUN chmod +x /*.sh
-
-
 # Run as a non-root user, separate uids for httpd and shibd, with common group shibd.
 # Allow httpd/mod_shib access to /var/run/shibboleth and /etc/shibboleth using group shibd
 # Prevent yum to create default uid for shibd to control user mapping between host and container
@@ -49,6 +45,10 @@ RUN adduser --gid $SHIBDGID --uid $SHIBDUID shibd \
  && chmod 700 /var/log/shibboleth \
  && chmod 750 /var/run/shibboleth/ /etc/shibboleth \
  && [ "$SHIBDUSER" == 'shibd' ] || usermod -l $SHIBDUSER shibd
+
+
+COPY install/scripts/*.sh /
+RUN chmod +x /*.sh
 
 CMD /start.sh
 
