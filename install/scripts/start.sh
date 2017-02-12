@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e   # exit if a command fails
 
 function main {
     # transition from root to daemon user is handled by shibd/httpd; must start as root
@@ -17,11 +16,7 @@ function cleanup_and_prep {
 
     # correct ownership (docker run will reset the ownership of volumes to the uis passed with -u).
     # Only a problem with /etc/shibboleth, where mod_shib needs to have access with the httpd id
-    ### removed: conflicting with dropped capabilites
-    #chown -R $SHIBDUSER:shibd \
-    #    /etc/shibboleth \
-    #    /var/lock/subsys  \
-    #    /var/log/shibboleth
+    chown -R $SHIBDUSER:shibd  /etc/shibboleth
 
     # Make sure we're not confused by old, incompletely-shutdown shibd or httpd
     # context after restarting the container. httpd and shibd won't start correctly                                                                                                                                                        # if thinking it is already running.
