@@ -47,7 +47,9 @@ RUN adduser --gid $SHIBDGID --uid $SHIBDUID shibd \
 
 
 COPY install/scripts/*.sh /
-RUN chmod +x /*.sh
+RUN chmod +x /*.sh \
+ && mkdir /var/log/startup \
+ && chmod 777 /var/log/startup
 
 CMD /start.sh
 
