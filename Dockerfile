@@ -20,12 +20,15 @@ COPY install/scripts/*.sh /
 RUN chmod +x /*.sh
 
 
-# Run as a non-root user, group root
+# Run as a non-root user, separate uids for httpd and shibd, with common group shibd.
+# Allow httpd/mod_shib access to /var/run/shibboleth and /etc/shibboleth using group shibd
 # Prevent yum to create default uid for shibd to control user mapping between host and container
 
 ARG HTTPDUSER=httpd
 ARG HTTPDUID=344005
-RUN adduser --gid 0 --uid $HTTPDUID $HTTPDUSER \
+ARG SHIBDGID=343005
+RUN groupadd --gid $SHIBDGID shibd \
+ && adduser --gid $SHIBDGID --uid $HTTPDUID $HTTPDUSER \
  && mkdir -p /var/log/httpd /run/httpd \
  && chown -R $HTTPDUID:0 /etc/httpd /var/log/httpd /run/httpd \
  && rm -rf /etc/httpd/modules /etc/httpd/logs /etc/httpd/run \
@@ -34,16 +37,17 @@ RUN adduser --gid 0 --uid $HTTPDUID $HTTPDUSER \
  && ln -s /run/httpd /etc/httpd/run
 
 
-# First add user "shibd", then install shibboleth SP, then rename to "$SHIBUSER".
+# First add user "shibd" and install shibboleth SP, then rename to "$SHIBUSER".
 # Set permissions for shibd user to write to /var/cache and /var/run /var/log
 ARG SHIBDUSER=shibd
 ARG SHIBDUID=343005
-RUN adduser --gid 0 --uid $SHIBDUID shibd \
+RUN adduser --gid $SHIBDGID --uid $SHIBDUID shibd \
  && mkdir -p /var/log/shibboleth /var/run/shibboleth/ \
- && chown $SHIBDUID:0 /var/log/shibboleth /var/run/shibboleth/ \
+ && chown $SHIBDUID:$SHIBDGID /var/log/shibboleth /var/run/shibboleth/ \
  && yum -y install httpd shibboleth.x86_64 shibboleth-embedded-ds \
  && yum -y clean all \
- && chmod 700 /var/log/shibboleth /var/run/shibboleth/ /etc/shibboleth \
+ && chmod 700 /var/log/shibboleth \
+ && chmod 750 /var/run/shibboleth/ /etc/shibboleth \
  && [ "$SHIBDUSER" == 'shibd' ] || usermod -l $SHIBDUSER shibd
 
 CMD /start.sh
