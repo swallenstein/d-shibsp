@@ -86,6 +86,10 @@ set_vol_mapping() {
     #map_docker_volume "${CONTAINERNAME}.var_cache" '/var/cache' 'Z' $DOCKERLOG_ROOT  # provide this for faster startup - otherwise a new container might have to fetch metadata first
     map_docker_volume "${CONTAINERNAME}.var_log" '/var/log' 'Z' $DOCKERLOG_ROOT
     map_docker_volume "${CONTAINERNAME}.var_www" '/var/www' 'Z' $DOCKERLOG_ROOT
+
+    create_user $SHIBDUSER $SHIBDUID
+    create_user $HTTPDUSER $HTTPDUID
+    #map_host_directory "$DOCKERVOL_ROOT/01shared_data/03pyfftestwpv/md_feed/" '/opt/md_feed/' 'ro'
 }
 
 

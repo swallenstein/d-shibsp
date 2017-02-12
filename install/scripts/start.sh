@@ -17,27 +17,28 @@ function cleanup_and_prep {
 
     # correct ownership (docker run will reset the ownership of volumes to the uis passed with -u).
     # Only a problem with /etc/shibboleth, where mod_shib needs to have access with the httpd id
-    chown -R $SHIBDUSER:shibd \
-        /etc/shibboleth \
-        /var/lock/subsys  \
-        /var/log/shibboleth  \
-        /var/log/shibboleth-www
+    ### removed: conflicting with dropped capabilites
+    #chown -R $SHIBDUSER:shibd \
+    #    /etc/shibboleth \
+    #    /var/lock/subsys  \
+    #    /var/log/shibboleth
 
     # Make sure we're not confused by old, incompletely-shutdown shibd or httpd
     # context after restarting the container. httpd and shibd won't start correctly                                                                                                                                                        # if thinking it is already running.
     rm -rf /var/lock/subsys/shibd  \
-           /var/run/shibboleth/shibd.*  \
            /run/httpd/*
+    su - shibd05  -c '[ -e /run/shibboleth/shibd.sock ] && rm /run/shibboleth/shibd.*'
 }
 
 
 function start_shibd {
-    /usr/sbin/shibd -u $SHIBDUSER -g root -p /var/run/shibboleth/shib.pid > /var/log/shibboleth/shibd_startup.log 2>&1
+    /usr/sbin/shibd -u $SHIBDUSER -g root -p /var/run/shibboleth/shib.pid
 }
 
 
 function start_httpd {
-    httpd -DFOREGROUND -d /etc/httpd/ -f conf/httpd.conf > /var/log/httpd/httpd_startup.log 2>&1
+    # do not start with root to avoid permission conflicts on log files
+    su - httpd05  -c 'httpd -DFOREGROUND -d /etc/httpd/ -f conf/httpd.conf'
 }
 
 
