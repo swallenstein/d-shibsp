@@ -8,15 +8,19 @@ if [ $(id -u) -ne 0 ]; then
 fi
 
 
-function cleanup {
+function cleanup_and_prep {
     # Make sure we're not confused by old, incompletely-shutdown shibd or httpd
     # context after restarting the container. httpd and shibd won't start correctly                                                                                                                                                        # if thinking it is already running.
     rm -f /var/lock/subsys/shibd
     rm -f /var/run/shibboleth/shibd.*
     rm -rf /run/httpd/*
+
+    # config redirects log files from jetty standard location to linux default path
+    mkdir -p /var/log/idp
+    mkdir -p /var/log/jetty
 }
 
-cleanup
+cleanup_and_prep
 
 /etc/shibboleth/shibd-redhat start 2>&1 > /var/log/start.log
 
