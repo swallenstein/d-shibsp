@@ -14,17 +14,14 @@ function main {
 
 
 function cleanup_and_prep {
-    # config redirects log files from jetty standard location to linux default path
-    mkdir -p /var/log/idp
-    mkdir -p /var/log/jetty
 
     # correct ownership (docker run will reset the ownership of volumes to the uis passed with -u).
     # Only a problem with /etc/shibboleth, where mod_shib needs to have access with the httpd id
     chown -R $SHIBDUSER:shibd \
         /etc/shibboleth \
-        /var/lock/subsys/ \
-        /var/log/idp \
-        /var/log/jetty
+        /var/lock/subsys  \
+        /var/log/shibboleth  \
+        /var/log/shibboleth-www
 
     # Make sure we're not confused by old, incompletely-shutdown shibd or httpd
     # context after restarting the container. httpd and shibd won't start correctly                                                                                                                                                        # if thinking it is already running.
@@ -35,7 +32,7 @@ function cleanup_and_prep {
 
 
 function start_shibd {
-    /usr/sbin/shibd -u shibd05 -g root -p /var/run/shibboleth/shib.pid > /var/log/shibboleth/shibd_startup.log 2>&1
+    /usr/sbin/shibd -u $SHIBDUSER -g root -p /var/run/shibboleth/shib.pid > /var/log/shibboleth/shibd_startup.log 2>&1
 }
 
 
