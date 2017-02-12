@@ -31,7 +31,7 @@ RUN adduser --gid 0 --uid $HTTPDUID $HTTPDUSER \
 ARG SHIBDUSER=shibd
 ARG SHIBDUID=343005
 RUN adduser --gid 0 --uid $SHIBDUID $SHIBDUSER \
- && mkdir -p /var/log/shibd && chown $SHIBDUID:0 /var/log/shibd && chmod -R g-r /var/log/shibd
+ && mkdir -p /var/log/shibd && chown $SHIBDUID:0 /var/log/shibd && chmod -R g-r /var/log/shibd \
  && yum -y install httpd shibboleth.x86_64 shibboleth-embedded-ds \
  && yum -y clean all \
  && chmod +x /etc/shibboleth/shibd-redhat
