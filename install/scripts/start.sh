@@ -22,7 +22,6 @@ function cleanup_and_prep {
 
 cleanup_and_prep
 
-/usr/sbin/ /var/log/start.log
+/usr/sbin/shibd -u shibd05 -g root -p /var/run/shibboleth/shib.pid > /var/log/shibboleth/shibd_startup.log 2&>1
 
-echo "starting httpd" >> /var/log/start.log
-httpd -DFOREGROUND -d /opt/etc/httpd/ -f conf/httpd.conf
+httpd -DFOREGROUND -d /opt/etc/httpd/ -f conf/httpd.conf /var/log/httpd/shibd_startup.log 2&>1
