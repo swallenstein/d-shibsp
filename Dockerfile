@@ -19,23 +19,22 @@ RUN echo $'export LD_LIBRARY_PATH=/opt/shibboleth/lib64:$LD_LIBRARY_PATH\n' > /e
 COPY install/scripts/*.sh /
 RUN chmod +x /*.sh
 
-# prevent yum to create default uid for shibd to control user mapping between host and container
-ARG SHIBDUSER=shibd
-ARG SHIBDUID=343005
-RUN adduser --gid 0 --uid $SHIBDUID $SHIBDUSER \
- && mkdir -p /var/log/shibd && chown $SHIBDUID:0 /var/log/shibd \
- && yum -y install shibboleth.x86_64 shibboleth-embedded-ds \
- && yum -y clean all \
- && chmod +x /etc/shibboleth/shibd-redhat
 
-# config will be mapped into /opt/etc/httpd. Remove original dir to avoid misconfiguration
-RUN mv /etc/httpd /etc/httpd.default
+# Run as a non-root user, group root
+# Prevent yum to create default uid for shibd to control user mapping between host and container
 
-## Service will run as a non-root user/group that must map to the docker host
 ARG HTTPDUSER=httpd
 ARG HTTPDUID=344005
 RUN adduser --gid 0 --uid $HTTPDUID $HTTPDUSER \
  && mkdir -p /var/log/httpd /run/httpd && chown $HTTPDUID:0 /var/log/httpd /run/httpd
+
+ARG SHIBDUSER=shibd
+ARG SHIBDUID=343005
+RUN adduser --gid 0 --uid $SHIBDUID $SHIBDUSER \
+ && mkdir -p /var/log/shibd && chown $SHIBDUID:0 /var/log/shibd && chmod -R g-r /var/log/shibd
+ && yum -y install httpd shibboleth.x86_64 shibboleth-embedded-ds \
+ && yum -y clean all \
+ && chmod +x /etc/shibboleth/shibd-redhat
 
 CMD /start.sh
 

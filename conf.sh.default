@@ -20,7 +20,7 @@ main() {
 }
 
 
-set_volume_mapping() {
+set_volume_root() {
     DOCKERVOL_ROOT='/docker_volumes'
     DOCKERLOG_ROOT='/dl'
 }
@@ -79,6 +79,7 @@ set_network() {
 
 set_vol_mapping() {
     map_docker_volume "${CONTAINERNAME}.etc_httpd '/etc/httpd' 'Z' $DOCKERVOL_ROOT
+    #map_docker_volume "${CONTAINERNAME}.etc_pki" '/etc/pki' 'Z' $DOCKERVOL_ROOT   # if HTTPD does TLS
     map_docker_volume "${CONTAINERNAME}.etc_shibboleth '/etc/shibboleth' 'Z' $DOCKERVOL_ROOT
     map_docker_volume "${CONTAINERNAME}.var_log" '/var/log' 'Z' $DOCKERLOG_ROOT
     map_docker_volume "${CONTAINERNAME}.var_www" '/var/www' 'Z' $DOCKERLOG_ROOT
