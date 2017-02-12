@@ -58,6 +58,7 @@ set_buildargs() {
 set_run_args() {
     export ENVSETTINGS="
         -e SHIBDUSER=$SHIBDUSER
+        -e HTTPDUSER=$HTTPDUSER
     "
     export STARTCMD='/start.sh'  # unset or blank to use image default
 }

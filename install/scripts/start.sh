@@ -22,7 +22,7 @@ function cleanup_and_prep {
     # context after restarting the container. httpd and shibd won't start correctly                                                                                                                                                        # if thinking it is already running.
     rm -rf /var/lock/subsys/shibd  \
            /run/httpd/*
-    su - shibd05  -c '[ -e /run/shibboleth/shibd.sock ] && rm /run/shibboleth/shibd.*'
+    su - $SHIBDUSER  -c '[ -e /run/shibboleth/shibd.sock ] && rm /run/shibboleth/shibd.*'
 }
 
 
@@ -33,7 +33,7 @@ function start_shibd {
 
 function start_httpd {
     # do not start with root to avoid permission conflicts on log files
-    su - httpd05  -c 'httpd -DFOREGROUND -d /etc/httpd/ -f conf/httpd.conf'  >> /var/log/startup/start.log 2>&1
+    su - $HTTPDUSER  -c 'httpd -DFOREGROUND -d /etc/httpd/ -f conf/httpd.conf'  >> /var/log/startup/start.log 2>&1
 }
 
 
