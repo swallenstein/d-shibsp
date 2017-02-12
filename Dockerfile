@@ -26,20 +26,25 @@ RUN chmod +x /*.sh
 ARG HTTPDUSER=httpd
 ARG HTTPDUID=344005
 RUN adduser --gid 0 --uid $HTTPDUID $HTTPDUSER \
- && mkdir -p /var/log/httpd /run/httpd && chown $HTTPDUID:0 /var/log/httpd /run/httpd \
+ && mkdir -p /var/log/httpd /run/httpd \
+ && chown -R $HTTPDUID:0 /etc/httpd/httpd /var/log/httpd /run/httpd \
  && rm -rf /etc/httpd/modules /etc/httpd/logs /etc/httpd/run \
  && ln -s /usr/lib64/httpd/modules /etc/httpd/modules\
  && ln -s /var/log/httpd /etc/httpd/logs \
  && ln -s /run/httpd /etc/httpd/run
 
 
+# First add user "shibd", then install shibboleth SP, then rename to "$SHIBUSER".
+# Set permissions for shibd user to write to /var/cache and /var/run /var/log
 ARG SHIBDUSER=shibd
 ARG SHIBDUID=343005
-RUN adduser --gid 0 --uid $SHIBDUID $SHIBDUSER \
- && mkdir -p /var/log/shibd && chown $SHIBDUID:0 /var/log/shibd && chmod -R g-r /var/log/shibd \
+RUN adduser --gid 0 --uid $SHIBDUID shibd \
+ && mkdir -p /var/log/shibd /var/run/shibboleth/ \
+ && chown $SHIBDUID:0 /var/log/shibd /var/run/shibboleth/ \
+ && chmod -R g-r /var/log/shibd /var/run/shibboleth/ \
  && yum -y install httpd shibboleth.x86_64 shibboleth-embedded-ds \
  && yum -y clean all \
- && chmod +x /etc/shibboleth/shibd-redhat
+ && [ "$SHIBDUSER" == 'shibd' ] || usermod -l shibd $SHIBDUSER
 
 CMD /start.sh
 

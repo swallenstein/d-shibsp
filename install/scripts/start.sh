@@ -22,7 +22,7 @@ function cleanup_and_prep {
 
 cleanup_and_prep
 
-/etc/shibboleth/shibd-redhat start 2>&1 > /var/log/start.log
+/usr/sbin/ /var/log/start.log
 
 echo "starting httpd" >> /var/log/start.log
 httpd -DFOREGROUND -d /opt/etc/httpd/ -f conf/httpd.conf

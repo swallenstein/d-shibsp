@@ -81,6 +81,7 @@ set_vol_mapping() {
     map_docker_volume "${CONTAINERNAME}.etc_httpd '/etc/httpd' 'Z' $DOCKERVOL_ROOT
     #map_docker_volume "${CONTAINERNAME}.etc_pki" '/etc/pki' 'Z' $DOCKERVOL_ROOT   # if HTTPD does TLS
     map_docker_volume "${CONTAINERNAME}.etc_shibboleth '/etc/shibboleth' 'Z' $DOCKERVOL_ROOT
+    #map_docker_volume "${CONTAINERNAME}.var_cache" '/var/cache' 'Z' $DOCKERLOG_ROOT  # provide this for faster startup - otherwise a new container might have to fetch metadata first
     map_docker_volume "${CONTAINERNAME}.var_log" '/var/log' 'Z' $DOCKERLOG_ROOT
     map_docker_volume "${CONTAINERNAME}.var_www" '/var/www' 'Z' $DOCKERLOG_ROOT
 }
