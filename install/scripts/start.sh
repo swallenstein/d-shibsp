@@ -27,13 +27,13 @@ function cleanup_and_prep {
 
 
 function start_shibd {
-    /usr/sbin/shibd -u $SHIBDUSER -g root -p /var/run/shibboleth/shib.pid > /var/log/startup >2&1
+    /usr/sbin/shibd -u $SHIBDUSER -g root -p /var/run/shibboleth/shib.pid > /var/log/startup/start.log 2>&1
 }
 
 
 function start_httpd {
     # do not start with root to avoid permission conflicts on log files
-    su - httpd05  -c 'httpd -DFOREGROUND -d /etc/httpd/ -f conf/httpd.conf'  > /var/log/startup >2&1
+    su - httpd05  -c 'httpd -DFOREGROUND -d /etc/httpd/ -f conf/httpd.conf'  >> /var/log/startup/start.log 2>&1
 }
 
 
