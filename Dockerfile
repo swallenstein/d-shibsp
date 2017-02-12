@@ -41,9 +41,9 @@ ARG SHIBDUID=343005
 RUN adduser --gid 0 --uid $SHIBDUID shibd \
  && mkdir -p /var/log/shibboleth /var/run/shibboleth/ \
  && chown $SHIBDUID:0 /var/log/shibboleth /var/run/shibboleth/ \
- && chmod 700 /var/log/shibboleth /var/run/shibboleth/ /etc/shibboleth \
  && yum -y install httpd shibboleth.x86_64 shibboleth-embedded-ds \
  && yum -y clean all \
+ && chmod 700 /var/log/shibboleth /var/run/shibboleth/ /etc/shibboleth \
  && [ "$SHIBDUSER" == 'shibd' ] || usermod -l $SHIBDUSER shibd
 
 CMD /start.sh
