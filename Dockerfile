@@ -26,7 +26,7 @@ RUN chmod +x /*.sh
 ARG HTTPDUSER=httpd
 ARG HTTPDUID=344005
 RUN adduser --gid 0 --uid $HTTPDUID $HTTPDUSER \
- && mkdir -p /var/log/httpd /run/httpd && chown $HTTPDUID:0 /var/log/httpd /run/httpd &
+ && mkdir -p /var/log/httpd /run/httpd && chown $HTTPDUID:0 /var/log/httpd /run/httpd \
  && rm -rf /etc/httpd/modules /etc/httpd/logs /etc/httpd/run \
  && ln -s /usr/lib64/httpd/modules /etc/httpd/modules\
  && ln -s /var/log/httpd /etc/httpd/logs \
