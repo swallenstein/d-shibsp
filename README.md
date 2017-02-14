@@ -8,41 +8,45 @@ A Shibboleth configuration running apache httpd and shibd in a container:
 4. The image produces immutable containers, i.e. a container can be removed and re-created
 any time without loss of data, because data is stored on mounted volumes.
 
+## Prepare the repository
+
+    git clone https://github.com/identinetics/docker-shib-sp.git
+    cd docker-shib-sp
+    git submodule update --init
+    
+
 ## Build the docker image
 
-1. adapt conf.sh
-2. run build.sh 
+    cp conf.sh.default conf.sh
+    # edit conf.sh
+    ./dscripts/build.sh 
 
 
-## Usage:
-create container:
+## Configure and start the container
  
-    run.sh -h  # print usage
-    run.sh -ipr bash  # interactive, print run command, root user 
-    run.sh     # daemon mode
+First, start the container with a shell. This will initialized the docker volumes
+
+    ./dscripts/run.sh -ip bash 
+
+The configure httpd and shibboleth (see next section). The default location for volumes is /var/lib/docker/volumes
+When configuration is completed run /start.sh in the container, or restart the container:
+
+    ./dscripts/run.sh     # daemon mode
     
 ## HTTPD Configuration 
 
-- The default apache httpd configuration is created in /etc/httpd during docker build, whereas /start.sh will
-  change the ServerRoot to /opt/etc/httpd
-- To copy the default configuration there are 2 options:
-  -- start the container with a shell and `cp -pr /etc/httpd /opt/etc/`, or
-  -- copy the configuration from a template you have from somewhere else 
-- Check/modify the /opt/etc/httpd/conf.d/vhost.conf
+- The default apache httpd configuration is created in /etc/httpd during docker build
 - In conf/httpd.conf:
   -- Set the httpd user/group to that defined in conf*.sh
-  -- Set ServerRoot to /opt/etc/httpd
-- If the apache httpd is not internet facing, setup the reverse proxy in the nginx container (optional)
+- If the apache httpd is not internet facing, setup the reverse proxy/load balancer etc.
 
 
 ## Shibboleth SP Configuration
+
 - The default shibd configuration is created in /etc/shibboleth during docker build
-- The shibd config directory should be different to /etc/shibboleth; however due to an issue with shibd
-  (https://issues.shibboleth.net/jira/browse/SSPCPP-709) this does not work. Thererfore, /etc/shibboleth is
-  a docker volume external to the container, overwriting the defaults genrated during installation. 
-- To copy the default configuration there are 2 options:
-  -- start the container without the volume mapping for /etc/shibboleth and copy the contents to a temporary location, or
-  -- copy the configuration from a template you have from somewhere else 
-- Set the SHIBD_USER in /opt/etc/shibboleth/shib-redhat to that defined in conf*.sh 
-- Check/modify the config files in /etc/shibboleth according to the documentation, optionally
-  create new keys and metadata (keygen.sh, metagen.sh)
+- Set the SHIBD_USER in /etc/shibboleth/shib-redhat to that defined in conf*.sh
+- Check/modify the config files in /etc/shibboleth according to the documentation, inparticular:
+  -- attribute-map.xml and attribute-policy.xml
+  -- shibboleth2.xml
+  -- new keys must be created manually (keygen.sh -> sp-cert.pem, sp-key.pem)
+  -- metagen.sh, then edit and complete the SP metadata and submit it to the registry

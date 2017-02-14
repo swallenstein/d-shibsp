@@ -41,6 +41,8 @@ RUN adduser --gid $SHIBDGID --uid $SHIBDUID shibd \
  && chown $SHIBDUID:$SHIBDGID /var/log/shibboleth /var/run/shibboleth/ \
  && yum -y install httpd shibboleth.x86_64 shibboleth-embedded-ds \
  && yum -y clean all \
+ # key material is useless on an image -> remove!
+ && rm -f /etc/shibboleth/sp-cert.pem /etc/shibboleth/sp-key.pem  \
  && chmod 700 /var/log/shibboleth \
  && chmod 750 /var/run/shibboleth/ /etc/shibboleth \
  && [ "$SHIBDUSER" == 'shibd' ] || usermod -l $SHIBDUSER shibd
