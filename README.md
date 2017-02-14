@@ -43,6 +43,8 @@ When configuration is completed run /start.sh in the container, or restart the c
 
 ## Shibboleth SP Configuration
 
+There are several good guides available, such as at shibboleth.net and switch.ch
+
 - The default shibd configuration is created in /etc/shibboleth during docker build
 - Set the SHIBD_USER in /etc/shibboleth/shib-redhat to that defined in conf*.sh
 - Check/modify the config files in /etc/shibboleth according to the documentation, inparticular:
