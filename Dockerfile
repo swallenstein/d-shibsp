@@ -53,7 +53,8 @@ RUN chmod +x /*.sh \
 
 CMD /start.sh
 
-VOLUME /etc/httpd \
+VOLUME /etc/httpd/conf \
+       /etc/httpd/conf.d \
        /etc/shibboleth \
        /var/log \
        /var/www
