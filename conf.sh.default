@@ -21,8 +21,9 @@ main() {
 
 
 set_volume_root() {
-    DOCKERVOL_ROOT='/docker_volumes'
-    DOCKERLOG_ROOT='/dl'
+    DOCKERVOL_SHORT='/docker_volumes'
+    DOCKERLOG_SHORT='/dl'
+    DOCKER_VOLUME_ROOT='/var/lib/docker/volumes'  # hard coded - check for your config if applicable!
 }
 
 
@@ -81,18 +82,26 @@ set_network() {
 
 
 set_vol_mapping() {
-    map_docker_volume "${CONTAINERNAME}.etc_httpd_conf" '/etc/httpd/conf' 'Z' $DOCKERVOL_ROOT
-    map_docker_volume "${CONTAINERNAME}.etc_httpd_conf.d" '/etc/httpd/conf.d' 'Z' $DOCKERVOL_ROOT
-    map_docker_volume "${CONTAINERNAME}.etc_shibboleth" '/etc/shibboleth' 'Z' $DOCKERVOL_ROOT
-    map_docker_volume "${CONTAINERNAME}.var_log" '/var/log' 'Z' $DOCKERLOG_ROOT
-    map_docker_volume "${CONTAINERNAME}.var_www" '/var/www' 'Z' $DOCKERLOG_ROOT
+    map_docker_volume "${CONTAINERNAME}.etc_httpd_conf" '/etc/httpd/conf' 'Z' $DOCKERVOL_SHORT
+    map_docker_volume "${CONTAINERNAME}.etc_httpd_conf.d" '/etc/httpd/conf.d' 'Z' $DOCKERVOL_SHORT
+    map_docker_volume "${CONTAINERNAME}.etc_shibboleth" '/etc/shibboleth' 'Z' $DOCKERVOL_SHORT
+    map_docker_volume "${CONTAINERNAME}.var_log" '/var/log' 'Z' $DOCKERLOG_SHORT
+    map_docker_volume "${CONTAINERNAME}.var_www" '/var/www' 'Z' $DOCKERLOG_SHORT
 
-    #map_docker_volume "${CONTAINERNAME}.etc_pki" '/etc/pki' 'Z' $DOCKERVOL_ROOT   # if HTTPD does TLS
-    #map_docker_volume "${CONTAINERNAME}.var_cache" '/var/cache' 'Z' $DOCKERLOG_ROOT  # provide this for faster startup - otherwise a new container might have to fetch metadata first
+    #map_docker_volume "${CONTAINERNAME}.etc_pki" '/etc/pki' 'Z' $DOCKERVOL_SHORT   # if HTTPD does TLS
+    #map_docker_volume "${CONTAINERNAME}.var_cache" '/var/cache' 'Z' $DOCKERLOG_SHORT  # provide this for faster startup - otherwise a new container might have to fetch metadata first
 
     create_user $SHIBDUSER $SHIBDUID
     create_user $HTTPDUSER $HTTPDUID
-    #map_host_directory "$DOCKERVOL_ROOT/01shared_data/03pyfftestwpv/md_feed/" '/opt/md_feed/' 'ro'
+
+	chown -R httpd${IMGID}:httpd${IMGID} $DOCKER_VOLUME_ROOT/${IMGID}shibsp.etc_httpd_conf*
+	chown -R shibd${IMGID}:shibd${IMGID} $DOCKER_VOLUME_ROOT/${IMGID}shibsp.etc_shibboleth
+	chown -R httpd${IMGID}:httpd${IMGID} $DOCKER_VOLUME_ROOT/${IMGID}shibsp.var_www/
+	chown -R httpd${IMGID}:httpd${IMGID} $DOCKER_VOLUME_ROOT/${IMGID}shibsp.var_log/
+	chown -R shibd${IMGID}:shibd${IMGID} $DOCKER_VOLUME_ROOT/${IMGID}shibsp.var_log/_data/shibboleth
+	chown -R shibd${IMGID}:0 $DOCKER_VOLUME_ROOT/${IMGID}shibsp.var_log/_data/startup/
+	chmod -R g+w $DOCKER_VOLUME_ROOT/${IMGID}shibsp.var_log/_data/startup/
+
 }
 
 
