@@ -21,8 +21,12 @@ main() {
 
 
 set_volume_root() {
-    DOCKERVOL_SHORT='/docker_volumes'
+    DOCKERVOL_SHORT='/dv'
     DOCKERLOG_SHORT='/dl'
+    if [ "$TRAVIS" == "true" ]; then
+        DOCKERVOL_SHORT='./dv';
+        DOCKERLOG_SHORT='./dl';
+    fi
     DOCKER_VOLUME_ROOT='/var/lib/docker/volumes'  # hard coded - check for your config if applicable!
 }
 
@@ -30,8 +34,8 @@ set_volume_root() {
 set_image_and_container_name() {
     # This IMGID qualifies image, container, user and IP adddress; this is helpful for managing
     # processes on the docker host etc.
-    IMGID='99'  # range from 02 .. 99; must be unique per node
-    PROJSHORT='sp1exampleorg'  # lowercase!
+    IMGID='05'  # range from 02 .. 99; must be unique per node
+    PROJSHORT='shibsp'  # lowercase!
     export IMAGENAME="r2h2/$PROJSHORT${IMGID}"
     export CONTAINERNAME="${IMGID}$PROJSHORT"
 }
@@ -61,6 +65,7 @@ set_run_args() {
         -e SHIBDUSER=$SHIBDUSER
         -e HTTPDUSER=$HTTPDUSER
     "
+    get_capabilities
     export STARTCMD='/start.sh'  # unset or blank to use image default
 }
 
@@ -82,17 +87,16 @@ set_network() {
 
 
 set_vol_mapping() {
+    create_user $SHIBDUSER $SHIBDUID
+    create_user $HTTPDUSER $HTTPDUID
+
     map_docker_volume "${CONTAINERNAME}.etc_httpd_conf" '/etc/httpd/conf' 'Z' $DOCKERVOL_SHORT
     map_docker_volume "${CONTAINERNAME}.etc_httpd_conf.d" '/etc/httpd/conf.d' 'Z' $DOCKERVOL_SHORT
     map_docker_volume "${CONTAINERNAME}.etc_shibboleth" '/etc/shibboleth' 'Z' $DOCKERVOL_SHORT
+    map_docker_volume '03pyff.var_md_feed' '/opt/md_feed' 'ro' $DOCKERVOL_SHORT
     map_docker_volume "${CONTAINERNAME}.var_log" '/var/log' 'Z' $DOCKERLOG_SHORT
-    map_docker_volume "${CONTAINERNAME}.var_www" '/var/www' 'Z' $DOCKERLOG_SHORT
-
-    #map_docker_volume "${CONTAINERNAME}.etc_pki" '/etc/pki' 'Z' $DOCKERVOL_SHORT   # if HTTPD does TLS
+    map_docker_volume "${CONTAINERNAME}.var_www" '/var/www' 'Z' $DOCKERVOL_SHORT
     #map_docker_volume "${CONTAINERNAME}.var_cache" '/var/cache' 'Z' $DOCKERLOG_SHORT  # provide this for faster startup - otherwise a new container might have to fetch metadata first
-
-    create_user $SHIBDUSER $SHIBDUID
-    create_user $HTTPDUSER $HTTPDUID
 
 	chown -R httpd${IMGID}:httpd${IMGID} $DOCKER_VOLUME_ROOT/${IMGID}shibsp.etc_httpd_conf*
 	chown -R shibd${IMGID}:shibd${IMGID} $DOCKER_VOLUME_ROOT/${IMGID}shibsp.etc_shibboleth
@@ -101,7 +105,6 @@ set_vol_mapping() {
 	chown -R shibd${IMGID}:shibd${IMGID} $DOCKER_VOLUME_ROOT/${IMGID}shibsp.var_log/_data/shibboleth
 	chown -R shibd${IMGID}:0 $DOCKER_VOLUME_ROOT/${IMGID}shibsp.var_log/_data/startup/
 	chmod -R g+w $DOCKER_VOLUME_ROOT/${IMGID}shibsp.var_log/_data/startup/
-
 }
 
 
