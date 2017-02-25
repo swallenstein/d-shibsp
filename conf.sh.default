@@ -93,20 +93,18 @@ set_vol_mapping() {
     map_docker_volume "${CONTAINERNAME}.etc_httpd_conf" '/etc/httpd/conf' 'Z' $DOCKERVOL_SHORT
     map_docker_volume "${CONTAINERNAME}.etc_httpd_conf.d" '/etc/httpd/conf.d' 'Z' $DOCKERVOL_SHORT
     map_docker_volume "${CONTAINERNAME}.etc_shibboleth" '/etc/shibboleth' 'Z' $DOCKERVOL_SHORT
+    map_docker_volume "${CONTAINERNAME}.etc_shibboleth-ds" '/etc/shibboleth-ds' 'Z' $DOCKERVOL_SHORT
     map_docker_volume '03pyff.var_md_feed' '/opt/md_feed' 'ro' $DOCKERVOL_SHORT
     map_docker_volume "${CONTAINERNAME}.var_log" '/var/log' 'Z' $DOCKERLOG_SHORT
     map_docker_volume "${CONTAINERNAME}.var_www" '/var/www' 'Z' $DOCKERVOL_SHORT
     #map_docker_volume "${CONTAINERNAME}.var_cache" '/var/cache' 'Z' $DOCKERLOG_SHORT  # provide this for faster startup - otherwise a new container might have to fetch metadata first
 
-	chown -R httpd${IMGID}:httpd${IMGID} $DOCKER_VOLUME_ROOT/${IMGID}shibsp.etc_httpd_conf*
-	chown -R shibd${IMGID}:shibd${IMGID} $DOCKER_VOLUME_ROOT/${IMGID}shibsp.etc_shibboleth
-	chown -R httpd${IMGID}:httpd${IMGID} $DOCKER_VOLUME_ROOT/${IMGID}shibsp.var_www/
-	chown -R httpd${IMGID}:httpd${IMGID} $DOCKER_VOLUME_ROOT/${IMGID}shibsp.var_log/
-	chown -R shibd${IMGID}:shibd${IMGID} $DOCKER_VOLUME_ROOT/${IMGID}shibsp.var_log/_data/shibboleth
-	chown -R shibd${IMGID}:0 $DOCKER_VOLUME_ROOT/${IMGID}shibsp.var_log/_data/startup/
-	chmod -R g+w $DOCKER_VOLUME_ROOT/${IMGID}shibsp.var_log/_data/startup/
+	chown -R $HTTPDUSER:$HTTPDUSER $DOCKER_VOLUME_ROOT/$CONTAINERNAME.etc_httpd_conf*
+	chown -R $SHIBDUSER:$SHIBDUSER $DOCKER_VOLUME_ROOT/$CONTAINERNAME.etc_shibboleth
+	chown -R $HTTPDUSER:$HTTPDUSER $DOCKER_VOLUME_ROOT/$CONTAINERNAME.var_www/
+	chown -R $HTTPDUSER:$HTTPDUSER $DOCKER_VOLUME_ROOT/$CONTAINERNAME.var_log/
+	create_chown_dir $DOCKER_VOLUME_ROOT/$CONTAINERNAME.var_log/_data/shibboleth/ $SHIBDUSER $SHIBDUSER
 }
-
 
 
 main
