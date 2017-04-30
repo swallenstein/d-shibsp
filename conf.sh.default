@@ -87,6 +87,7 @@ set_network() {
 
 
 set_vol_mapping() {
+    VOLMAPPING=''
     create_user $SHIBDUSER $SHIBDUID
     create_user $HTTPDUSER $HTTPDUID
 
