@@ -33,6 +33,7 @@ function start_shibd {
 
 function start_httpd {
     # do not start with root to avoid permission conflicts on log files
+    chown $HTTPDUSER:root /run/httpd/
     su - $HTTPDUSER  -c 'httpd -DFOREGROUND -d /etc/httpd/ -f conf/httpd.conf'  >> /var/log/startup/start.log 2>&1
 }
 
