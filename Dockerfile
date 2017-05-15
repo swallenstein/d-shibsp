@@ -7,7 +7,7 @@ FROM rhoerbe/shib-spbase
 LABEL maintainer="Rainer Hörbe <r2h2@hoerbe.at>" \
       version="0.0.0" \
       # by default, remove all capabilities, but add those required to change the user
-      capabilities='--cap-drop=all --cap-add=setuid --cap-add=setgid --cap-add=chown'
+      capabilities='--cap-drop=all --cap-add=setuid --cap-add=setgid --cap-add=chown --cap-add=net_raw'
 
 # allow build behind firewall
 ARG HTTPS_PROXY=''
