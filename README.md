@@ -52,3 +52,28 @@ There are several good guides available, such as at shibboleth.net and switch.ch
   -- shibboleth2.xml
   -- new keys must be created manually (keygen.sh -> sp-cert.pem, sp-key.pem)
   -- metagen.sh, then edit and complete the SP metadata and submit it to the registry
+
+
+### Duplicating/migrating a configuration
+
+An existing configuration might be duplicated or migrated.
+
+- copy conf.sh (or confxx.sh to confxy.sh on the same node)
+- edit conf.sh and set the IMGID and PROJSHORT
+- dscripts/build.sh (this will also create the docker volumes)
+- the default path for the volumes is $DOCKER_VOLUME_ROOT/$CONTAINERNAME, here in short VOLROOT
+- copy the contents of the docker volumes from the existing instance
+- edit VOLROOT/.etc_httpd_conf/httpd.conf and correct the user
+- set servername, docroot and logfile path in VOLROOT/.etc_httpd_conf.d/vhost.conf
+- Adapt shibboleth2.xml, attribute-map.xml and attribute-policy.xml in VOLROOT.etc_shibboleth/ 
+- create a new sp key and metadata:
+ 
+    dscripts/run.sh -i  # start container in interactive mode
+    cd /etc/shibboleth; ./keygen.sh -f
+    chown shibd-user sp-*
+    metagen.sh
+    
+- edit metadata and submit it to the metadata feed
+- copy the metadata signing key to VOLROOT.etc_shibboleth/metadata_crt.pem (as defined in shibboleth2.xml)
+- edit static contents in VOLROOT.var_www
+- Besides the SP configuration the load balancer, TLS-certificate and DNS-name need to be configured
