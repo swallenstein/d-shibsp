@@ -86,7 +86,7 @@ create_intercontainer_network() {
 }
 
 
-_set_vol_mapping() {
+setup_vol_mapping() {
     # Create docker volume (-> map_docker_volume) or map a host dir (-> map_host_directory)
     # In both cases create a shortcut in the shortcut directory (DOCKERVOL_SHORT, DOCKERLOG_SHORT)
     mode=$1  # create (used by run.sh)/list (used by manage.sh)
