@@ -39,7 +39,7 @@ ARG SHIBDUID=343005
 RUN adduser --gid $SHIBDGID --uid $SHIBDUID shibd \
  && mkdir -p /var/log/shibboleth /var/run/shibboleth/ \
  && chown $SHIBDUID:$SHIBDGID /var/log/shibboleth /var/run/shibboleth/ \
- && yum -y update &
+ && yum -y update \
  && yum -y install httpd shibboleth.x86_64 shibboleth-embedded-ds \
  && yum -y clean all \
  # key material is useless on an image -> remove!
