@@ -2,11 +2,11 @@
 
 A Shibboleth configuration running apache httpd and shibd in a container:
 
-1. Mapping users (apache and shibd) between host & container filesystems (also with multiple container instances)
-2. The user-defined network uses static IP addresses.
+1. Mapping users (apache and shibd) between host & container filesystems (useful in a shared process namespace)
+2. The user-defined network uses static IP addresses
 3. Image is based on centos7
 4. The image produces immutable containers, i.e. a container can be removed and re-created
-any time without loss of data, because data is stored on mounted volumes.
+   any time without loss of data, because data is stored on mounted volumes
 
 ## Prepare the repository
 
@@ -24,11 +24,11 @@ any time without loss of data, because data is stored on mounted volumes.
 
 ## Configure and start the container
  
-First, start the container with a shell. This will initialized the docker volumes
+First, start the container with a shell. This will initialize the persistent docker volumes
 
     ./dscripts/run.sh -ip bash 
 
-The configure httpd and shibboleth (see next section). The default location for volumes is /var/lib/docker/volumes
+Then configure httpd and shibboleth (see next section). The default location for volumes is /var/lib/docker/volumes
 When configuration is completed run /start.sh in the container, or restart the container:
 
     ./dscripts/run.sh     # daemon mode
@@ -47,7 +47,7 @@ There are several good guides available, such as at shibboleth.net and switch.ch
 
 - The default shibd configuration is created in /etc/shibboleth during docker build
 - Set the SHIBD_USER in /etc/shibboleth/shib-redhat to that defined in conf*.sh
-- Check/modify the config files in /etc/shibboleth according to the documentation, inparticular:
+- Check/modify the config files in /etc/shibboleth according to the documentation, in particular:
   -- attribute-map.xml and attribute-policy.xml
   -- shibboleth2.xml
   -- new keys must be created manually (keygen.sh -> sp-cert.pem, sp-key.pem)
@@ -56,9 +56,9 @@ There are several good guides available, such as at shibboleth.net and switch.ch
 
 ### Duplicating/migrating a configuration
 
-An existing configuration might be duplicated or migrated.
+An existing configuration might be duplicated on the same or migrated to another node.
 
-- copy conf.sh (or confxx.sh to confxy.sh on the same node)
+- copy conf.sh (or confXX.sh to confYY.sh on the same node)
 - edit conf.sh and set the IMGID and PROJSHORT
 - dscripts/build.sh (this will also create the docker volumes)
 - the default path for the volumes is $DOCKER_VOLUME_ROOT/$CONTAINERNAME, here in short VOLROOT
