@@ -5,7 +5,7 @@
 # therefore build shib-spbase on other system and load it:
 FROM rhoerbe/shib-spbase
 LABEL maintainer="Rainer Hörbe <r2h2@hoerbe.at>" \
-      version="0.1.0" \
+      version="0.2.0" \
       # by default, remove all capabilities, but add those required to change the user
       capabilities='--cap-drop=all --cap-add=setuid --cap-add=setgid --cap-add=chown --cap-add=net_raw'
 
@@ -61,3 +61,5 @@ VOLUME /etc/httpd/conf \
        /etc/shibboleth \
        /var/log \
        /var/www
+
+COPY REPO_STATUS  /opt/etc/REPO_STATUS

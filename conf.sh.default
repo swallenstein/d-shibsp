@@ -54,6 +54,7 @@ _set_buildargs() {
         --build-arg HTTPDUSER=$HTTPDUSER
         --build-arg HTTPDUID=$HTTPDUID
     "
+    export REPO_STATUS='True'  # if set: generate 'REPO_STATUS' file to be included in docker image at /opt/etc/
 }
 
 
