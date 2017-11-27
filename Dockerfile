@@ -62,4 +62,6 @@ VOLUME /etc/httpd/conf \
        /var/log \
        /var/www
 
+EXPOSE 8080
+
 COPY REPO_STATUS  /opt/etc/REPO_STATUS
