@@ -1,0 +1,238 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+Jinja2-Template for a XML Style Sheet to pot-process a Shibboleth-SP generated SAML metadata document.
+-->
+
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:alg="urn:oasis:names:tc:SAML:metadata:algsupport"
+    xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+    xmlns:idpdisco="urn:oasis:names:tc:SAML:profiles:SSO:idp-discovery-protocol"
+    xmlns:init="urn:oasis:names:tc:SAML:profiles:SSO:request-init"
+    xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
+    xmlns:mdattr="urn:oasis:names:tc:SAML:metadata:attribute"
+    xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" >
+  <xsl:output method="xml" indent="yes" omit-xml-declaration="no" encoding="utf-8"/>
+
+  <!-- Variables to be set in input XML doc -->
+  <xsl:variable name="EntityCategory" select="'{{entity_category}}'"/>
+  <xsl:variable name="mduiDisplayName" select="'{{ mdui_DisplayName }}'"/>
+  <xsl:variable name="mduiDescription" select="'{{mdui_Description}}'"/>
+  <xsl:variable name="mduiLogo" select="'{{mdui_Description}}'"/>
+
+  <xsl:variable name="language" select="'{{xml_lang}}'"/>
+  <xsl:variable name="wantsAuthnRequestSigned" select="'{{wantsAuthnRequestSigned}}'"/>
+
+  <xsl:variable name="supportGivenName" select="'{{ContactPerson_support_Givenname}}'"/>
+  <xsl:variable name="supportSurName" select="'{{ContactPerson_support_Surname}}'"/>
+  <xsl:variable name="supportEmail" select="'{{ContactPerson_support_Email}}'"/>
+
+  <xsl:variable name="technicalGivenName" select="'{{ContactPerson_technical_Givenname}}'"/>
+  <xsl:variable name="technicalSurName" select="'{{ContactPerson_technical_Surname}}'"/>
+  <xsl:variable name="technicalEmail" select="'{{ContactPerson_technical_Email}}'"/>
+
+  <xsl:variable name="organizationName" select="'{{OrganizationName}}'"/>
+  <xsl:variable name="organizationDisplayName" select="'{{OrganizationDisplayName}}'"/>
+  <xsl:variable name="organizationUrl" select="'{{OrganizationUrl}}'"/>
+
+  <!-- #################################################################################### -->
+
+
+  <!-- EntityDescriptor  -->
+  <xsl:template match="//md:EntityDescriptor">
+
+    <xsl:element name="EntityDescriptor" namespace="urn:oasis:names:tc:SAML:2.0:metadata">
+      <xsl:copy-of select="@*"/>
+      <xsl:call-template name="EntityDescriptorExtensions"/>
+      <xsl:apply-templates/>
+    </xsl:element>
+
+  </xsl:template>
+
+  <!-- EntityDescriptor > Extensions -->
+  <xsl:template name="EntityDescriptorExtensions">
+    <xsl:element name="Extensions" namespace="urn:oasis:names:tc:SAML:2.0:metadata">
+
+      <xsl:element name="EntityAttributes" namespace="urn:oasis:names:tc:SAML:metadata:attribute">
+
+        <xsl:element name="Attribute" namespace="urn:oasis:names:tc:SAML:2.0:assertion">
+          <xsl:attribute name="Name">http://macedir.org/entity-category</xsl:attribute>
+          <xsl:attribute name="NameFormat">urn:oasis:names:tc:SAML:2.0:attrname-format:uri</xsl:attribute>
+
+          <xsl:element name="AttributeValue" namespace="urn:oasis:names:tc:SAML:2.0:assertion">EntityDescriptor.entity-category</xsl:element>
+
+        </xsl:element>
+
+      </xsl:element>
+    </xsl:element>
+  </xsl:template>
+
+  <!-- IDPSSODescriptor  -->
+  <xsl:template match="//md:IDPSSODescriptor">
+
+
+    <xsl:element name="IDPSSODescriptor" namespace="urn:oasis:names:tc:SAML:2.0:metadata">
+      <xsl:copy-of select="@*"/>
+
+
+      <xsl:call-template name="IDPSSODescriptorExtensions"/>
+
+      <xsl:apply-templates/>
+    </xsl:element>
+
+  </xsl:template>
+
+
+  <!-- IDPSSODescriptor  > Extensions -->
+  <xsl:template name="IDPSSODescriptorExtensions">
+    <xsl:element name="Extensions" namespace="urn:oasis:names:tc:SAML:2.0:metadata">
+
+      <xsl:element name="DigestMethod" namespace="urn:oasis:names:tc:SAML:metadata:algsupport">
+        <xsl:attribute name="Algorithm">http://www.w3.org/2001/04/xmlenc#sha256</xsl:attribute>
+      </xsl:element>
+
+
+      <xsl:element name="SigningMethod" namespace="urn:oasis:names:tc:SAML:metadata:algsupport">
+        <xsl:attribute name="MinKeySize">256</xsl:attribute>
+        <xsl:attribute name="MaxKeySize">511</xsl:attribute>
+        <xsl:attribute name="Algorithm">http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256</xsl:attribute>
+      </xsl:element>
+
+      <xsl:element name="SigningMethod" namespace="urn:oasis:names:tc:SAML:metadata:algsupport">
+        <xsl:attribute name="MinKeySize">2048</xsl:attribute>
+        <xsl:attribute name="MaxKeySize">4096</xsl:attribute>
+        <xsl:attribute name="Algorithm">http://www.w3.org/2001/04/xmldsig-more#rsa-sha256</xsl:attribute>
+      </xsl:element>
+
+      <xsl:element name="UIInfo" namespace="urn:oasis:names:tc:SAML:metadata:ui">
+        <xsl:element name="DisplayName" namespace="urn:oasis:names:tc:SAML:metadata:ui">
+          <xsl:attribute name="xml:lang">
+            <xsl:value-of select="$language"/>
+          </xsl:attribute>
+          <xsl:value-of select="$mduiDisplayName"/>
+        </xsl:element>
+        <xsl:element name="Description" namespace="urn:oasis:names:tc:SAML:metadata:ui">
+          <xsl:attribute name="xml:lang">
+            <xsl:value-of select="$language"/>
+          </xsl:attribute>
+        <xsl:value-of select="$mduiDescription"/>
+        </xsl:element>
+
+      </xsl:element>
+
+    </xsl:element>
+  </xsl:template>
+
+
+
+  <!-- Contact Person -->
+  <xsl:template match="//md:ContactPerson">
+
+    <xsl:call-template name="Organisation"/>
+
+    <!-- Administrative -->
+    <xsl:element name="ContactPerson" namespace="urn:oasis:names:tc:SAML:2.0:metadata">
+      <xsl:attribute name="contactType">administrative</xsl:attribute>
+
+      <xsl:element name="GivenName" namespace="urn:oasis:names:tc:SAML:2.0:metadata">
+        <xsl:value-of select="$administrativeGivenName"/>
+      </xsl:element>
+      <xsl:element name="SurName" namespace="urn:oasis:names:tc:SAML:2.0:metadata">
+        <xsl:value-of select="$administrativeSurName"/>
+      </xsl:element>
+      <xsl:element name="EmailAddress" namespace="urn:oasis:names:tc:SAML:2.0:metadata">
+        <xsl:value-of select="$administrativeEmail"/>
+      </xsl:element>
+    </xsl:element>
+
+
+    <!-- Technical -->
+    <xsl:element name="ContactPerson" namespace="urn:oasis:names:tc:SAML:2.0:metadata">
+      <xsl:attribute name="contactType">technical</xsl:attribute>
+
+      <xsl:element name="GivenName" namespace="urn:oasis:names:tc:SAML:2.0:metadata">
+        <xsl:value-of select="$technicalGivenName"/>
+      </xsl:element>
+      <xsl:element name="SurName" namespace="urn:oasis:names:tc:SAML:2.0:metadata">
+        <xsl:value-of select="$technicalSurName"/>
+      </xsl:element>
+      <xsl:element name="EmailAddress" namespace="urn:oasis:names:tc:SAML:2.0:metadata">
+        <xsl:value-of select="$technicalEmail"/>
+      </xsl:element>
+    </xsl:element>
+
+    <!-- Support -->
+    <xsl:element name="ContactPerson" namespace="urn:oasis:names:tc:SAML:2.0:metadata">
+      <xsl:attribute name="contactType">support</xsl:attribute>
+
+      <xsl:element name="GivenName" namespace="urn:oasis:names:tc:SAML:2.0:metadata">
+        <xsl:value-of select="$supportGivenName"/>
+      </xsl:element>
+      <xsl:element name="EmailAddress" namespace="urn:oasis:names:tc:SAML:2.0:metadata">
+        <xsl:value-of select="$supportEmail"/>
+      </xsl:element>
+    </xsl:element>
+  </xsl:template>
+
+  <!-- Organization Template -->
+  <xsl:template name="Organisation">
+    <xsl:element name="Organization" namespace="urn:oasis:names:tc:SAML:2.0:metadata">
+
+
+      <xsl:element name="OrganizationName" namespace="urn:oasis:names:tc:SAML:2.0:metadata">
+        <xsl:attribute name="xml:lang">
+          <xsl:value-of select="$language"/>
+        </xsl:attribute>
+        <xsl:value-of select="$organizationName"/>
+      </xsl:element>
+
+      <xsl:element name="OrganizationDisplayName" namespace="urn:oasis:names:tc:SAML:2.0:metadata">
+        <xsl:attribute name="xml:lang">
+          <xsl:value-of select="$language"/>
+        </xsl:attribute>
+        <xsl:value-of select="$organizationDisplayName"/>
+      </xsl:element>
+
+      <xsl:element name="OrganizationURL" namespace="urn:oasis:names:tc:SAML:2.0:metadata">
+        <xsl:attribute name="xml:lang">
+          <xsl:value-of select="$language"/>
+        </xsl:attribute>
+        <xsl:value-of select="$organizationUrl"/>
+      </xsl:element>
+
+    </xsl:element>
+
+  </xsl:template>
+
+  <!-- Elements to be copied -->
+  <xsl:template match="//md:KeyDescriptor">
+    <xsl:copy-of select="."/>
+  </xsl:template>
+
+  <xsl:template match="//md:SingleSignOnService">
+    <xsl:copy-of select="."/>
+  </xsl:template>
+
+  <xsl:template match="//md:SingleLogoutService">
+    <xsl:copy-of select="."/>
+  </xsl:template>
+
+  <xsl:template match="//md:NameIDFormat">
+    <xsl:copy-of select="."/>
+  </xsl:template>
+
+  <xsl:template match="//md:AssertionConsumerService">
+    <xsl:copy-of select="."/>
+  </xsl:template>
+
+  <xsl:template match="//md:AttributeConsumingService">
+    <xsl:copy-of select="."/>
+  </xsl:template>
+
+
+  <!-- Elemente to be removed -->
+  <xsl:template match="//ds:Signature"/>
+  <xsl:template match="//md:RoleDescriptor"/>
+
+</xsl:stylesheet>

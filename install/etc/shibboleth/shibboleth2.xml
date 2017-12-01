@@ -6,8 +6,8 @@
     clockSkew="180">
 
     <ApplicationDefaults id="default" policyId="default"
-                         entityID="https://sp2.test.wpv.portalverbund.at/sp.xml"
-                         REMOTE_USER="uid gid wbpkhash persistent-id targeted-id"
+                         entityID="https://sp.example.org/sp"
+                         REMOTE_USER="uid persistent-id targeted-id"
                          signingAlg="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"
                          signing="true" 
                          encryption="false" >
@@ -18,17 +18,17 @@
                   idpHistory="true" idpHistoryDays="60">
 
             <!--
-            <SSO entityID="https://idp1.test.wpv.portalverbund.at/idp/shibboleth">
+            <SSO entityID="https://idp.example.org/idp">
               SAML2
             </SSO>
             -->
-            <SSO discoveryProtocol="SAMLDS" discoveryURL="https://ds.test.wpv.portalverbund.at/role/idp.ds">
+            <SSO discoveryProtocol="SAMLDS" discoveryURL="https://ds.example.org/role/idp.ds">
               SAML2
             </SSO>
 
             <Logout>SAML2 </Logout>
             <Handler type="MetadataGenerator" Location="/Metadata" signing="false"/>
-            <Handler type="Status" Location="/Status" acl="10.1.1.2 127.0.0.1 ::1"/>
+            <Handler type="Status" Location="/Status" acl="10.1.2.3 127.0.0.1 ::1"/>
             <Handler type="Session" Location="/Session" showAttributeValues="false"/>
             <Handler type="DiscoveryFeed" Location="/DiscoFeed"/>
         </Sessions>
@@ -37,7 +37,11 @@
             helpLocation="/about.html"
             styleSheet="/shibboleth-sp/main.css"/>
         
-        <MetadataProvider type="XML" validate="true" file="/opt/md_feed/metadata.xml"/>
+        <!--MetadataProvider type="XML" validate="true" file="/opt/md_feed/metadata.xml"/-->
+        <MetadataProvider type="XML" url="http://mdfeed.federation.org/metadata.xml"
+                          backingFilePath="metadata_backing.xml">
+            <MetadataFilter type="Signature" certificate="metadata_crt.pem"/>
+        </MetadataProvider>
         <AttributeExtractor type="XML" validate="true" reloadChanges="false" path="attribute-map.xml"/>
         <AttributeResolver type="Query" subjectMatch="true"/>
         <AttributeFilter type="XML" validate="true" path="attribute-policy.xml"/>

@@ -45,7 +45,7 @@ RUN adduser --gid $SHIBDGID --uid $SHIBDUID shibd \
  # key material is useless on an image -> remove!
  && rm -f /etc/shibboleth/sp-cert.pem /etc/shibboleth/sp-key.pem  \
  && chmod 700 /var/log/shibboleth \
- && chmod 750 /var/run/shibboleth/ /etc/shibboleth \
+ && chmod 750 /var/run/shibboleth/ /etc/shibboleth /etc/shibboleth/*.sh \
  && [ "$SHIBDUSER" == 'shibd' ] || usermod -l $SHIBDUSER shibd
 
 

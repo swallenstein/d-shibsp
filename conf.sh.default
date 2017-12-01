@@ -64,6 +64,8 @@ _set_run_args() {
         -e SHIBDUSER=$SHIBDUSER
         -e HTTPDUSER=$HTTPDUSER
         -e LOGPURGEFILES
+        -e ENTITYID=https://sp.expample.org/sp
+        -e HOSTNAME=sp.example.org
     "
     get_capabilities
     export STARTCMD='/start.sh'  # unset or blank to use image default
