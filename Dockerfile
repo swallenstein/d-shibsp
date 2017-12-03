@@ -54,9 +54,9 @@ RUN yum -y install epel-release \
  && yum -y install python34 \
  && yum clean all \
  && curl https://bootstrap.pypa.io/get-pip.py | python3.4 \
- && pip3.4 install yaml
+ && pip3.4 install yaml-1.3
 
-COPY install /opt/
+COPY install /opt/install
 COPY install/scripts/*.sh /
 RUN chmod +x /*.sh \
  && mkdir /var/log/startup \
