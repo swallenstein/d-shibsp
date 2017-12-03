@@ -7,6 +7,7 @@ A Shibboleth configuration running apache httpd and shibd in a container:
 3. Image is based on centos7
 4. The image produces immutable containers, i.e. a container can be removed and re-created
    any time without loss of data, because data is stored on mounted volumes
+5. The express configuration uses a single YAML file to setup a shibboleth SP.
 
 ## Prepare the repository
 
@@ -38,47 +39,21 @@ Once the configuration is completed run `/start.sh` in the container, or restart
 
 ### Configuration Options
 
-There are several good guides available, such as on shibboleth.net and switch.ch
-This repository includes a simple default configuration for an SP.
-To make it operational following contants need to be replaced:
+There are several good guides for a general Shibboleth SP available, such as on shibboleth.net and switch.ch.
+As an alternative this repository includes an express configuration for the SP.
+By editing setup_shibsp.yaml a basic configuration can be controlled from a single place.
+The setup can be run only once after creating persistent docker volumes. Manual editing afterwards is possible.
+To prepare the express setup, edit `/opt/install/config/setup_shibsp.yaml', then run
 
-|---
-| File            | Element                    | sample value                              | to be replaced with
-| httpd.conf      | User                       | httpd                                     | conf*.sh/$HTTPDUSER
-| shibboleth2.xml | entityID                   | https://sp.example.org/sp                 | https://mdreg.portalverbund.gv.at/sp
-| shibboleth2.xml | SP hostname                | sp.example.org |mdreg.portalverbund.gv.at |
-| shibboleth2.xml | Metadata feed              | http://mdfeed.federation.org/metadata.xml | http://mdfeed.portalverbund.gv.at/metadata.xml
-| shibboleth2.xml | External Discovery Service | https://disco.federation.org/role/idp.ds  | https://disco.portalverbund.gv.at/role/idp.ds
-|---
-
-    
-## HTTPD Configuration
-
-- The default apache httpd configuration is created in /etc/httpd during docker build
-- In conf/httpd.conf:
-  -- Set "User" to $HTTPDUSER as defined in conf*.sh
-  -- Keep the directive "Group shibd"
-- If the apache httpd is not internet facing, setup the reverse proxy/load balancer; otherwise configure TLS
-- In conf/httpd.conf:
+    /opt/install/scripts/setup_config.sh
 
 
-## Shibboleth SP Configuration
+## Shibboleth SP further Configuration
 
-
-The default shibd configuration is created in /etc/shibboleth during docker build.
 Check/modify the config files in /etc/shibboleth according to the documentation, in particular:
 
   - attribute-map.xml and attribute-policy.xml
-  - shibboleth2.xml
-  - new keys must be created manually (inside the container)
-  
-    `su - $SHIBDUSER`
-    `cd /etc/shibboleth`
-    `./keygen.sh -f -u $SHIBDUSER -g shibd -y 10 -h $HOSTNAME -e $ENTITYID`
-    
-  - generate and edit the SP metadata according to your federation policy; then submit it to the registry.
-  
-    `bash ./metagen.sh -c sp-cert.pem -h idp.example.org -e https://idp.example.org/sp > metadata_to_be_edited.xml`
+  - register /etc/shibboleth/export/sp_metadata.xml at the federation resource registry
 
 
 ### Duplicating/migrating an existing configuration

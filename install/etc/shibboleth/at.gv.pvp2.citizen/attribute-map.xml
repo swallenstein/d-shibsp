@@ -1,0 +1,33 @@
+<Attributes xmlns="urn:mace:shibboleth:2.0:attribute-map" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <!-- SAML 2.0 NameID Format: -->
+    <Attribute name="urn:oasis:names:tc:SAML:2.0:nameid-format:persistent" id="NameID-persistent">
+        <AttributeDecoder xsi:type="NameIDAttributeDecoder" formatter="$NameQualifier!$SPNameQualifier!$Name" defaultQualifiers="true"/>
+    </Attribute>
+    <Attribute name="urn:oasis:names:tc:SAML:2.0:nameid-format:transient" id="NameID">
+        <AttributeDecoder xsi:type="NameIDAttributeDecoder" formatter="$Name"/>
+    </Attribute>
+    <Attribute name="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified" id="NameID-unspec">
+        <AttributeDecoder xsi:type="NameIDAttributeDecoder" formatter="$Name"/>
+    </Attribute>
+
+    <!-- PVP 2.1 attributes -->
+    <Attribute name="urn:oid:1.2.40.0.10.2.1.1.261.20"  id="PVP-PRINCIPALNAME" />
+    <Attribute name="urn:oid:2.5.4.42"                  id="PVP-GIVENNAME" />
+    <Attribute name="urn:oid:1.2.40.0.10.2.1.1.55"      id="PVP-BIRTHDATE" />
+    <Attribute name="urn:oid:1.2.40.0.10.2.1.1.149"     id="PVP-BPK" />
+
+    <!-- eid/Bürgerkarte attributes -->
+    <Attribute name="urn:oid:1.2.40.0.10.2.1.1.261.94"  id="EID-CITIZEN-QAA-LEVEL" />
+    <Attribute name="urn:oid:1.2.40.0.10.2.1.1.261.32"  id="EID-ISSUING-NATION" />
+    <Attribute name="urn:oid:1.2.40.0.10.2.1.1.261.34"  id="EID-SECTOR-FOR-IDENTIFIER" />
+    <Attribute name="urn:oid:1.2.40.0.10.2.1.1.261.36"  id="EID-SOURCE-PIN" />
+    <Attribute name="urn:oid: 1.2.40.0.10.2.1.1.261.104"id="EID-SOURCE-PIN-TYPE" />
+    <Attribute name="urn:oid:1.2.40.0.10.2.1.1.261.38"  id="EID-IDENTITY-LINK" />
+    <Attribute name="urn:oid:1.2.40.0.10.2.1.1.261.62"  id="EID-AUTH-BLOCK" />
+    <Attribute name="urn:oid:1.2.40.0.10.2.1.1.261.64"  id="EID-CCS-URL" />
+    <Attribute name="urn:oid:1.2.40.0.10.2.1.1.261.66"  id="EID-SIGNER-CERTIFICATE"/>
+    <Attribute name="urn:oid:1.2.40.0.10.2.1.1.261.96"  id="EID-STORK-TOKEN" />
+
+</Attributes>
+

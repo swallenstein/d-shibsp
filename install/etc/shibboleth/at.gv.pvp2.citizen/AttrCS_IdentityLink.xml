@@ -1,0 +1,10 @@
+    <!-- XML Snippet: copy into SP metadata -->
+    <md:AttributeConsumingService index="1">
+     <md:AttributeConsumingService index="1">
+      <md:ServiceName xml:lang="en">Identity Link Attributes + Certificate</md:ServiceName>
+      <md:RequestedAttribute FriendlyName="PVP-PRINCIPALNAME" Name="urn:oid:1.2.40.0.10.2.1.1.261.20" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" isRequired="true"/>
+      <md:RequestedAttribute FriendlyName="givenName" Name="urn:oid:2.5.4.42" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" isRequired="true"/>
+      <md:RequestedAttribute FriendlyName="BIRTHDATE" Name="urn:oid:1.2.40.0.10.2.1.1.55" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri"  isRequired="true"/>
+      <md:RequestedAttribute FriendlyName="EID-SIGNER-CERTIFICATE" Name="urn:oid:1.2.40.0.10.2.1.1.261.66" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" isRequired="true"/>
+      <md:RequestedAttribute FriendlyName="EID-ISSUING-NATION" Name="urn:oid:1.2.40.0.10.2.1.1.261.32" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" isRequired="false"/>
+   </md:AttributeConsumingService>

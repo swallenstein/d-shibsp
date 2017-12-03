@@ -1,44 +1,40 @@
 <SPConfig xmlns="urn:mace:shibboleth:2.0:native:sp:config"
     xmlns:conf="urn:mace:shibboleth:2.0:native:sp:config"
     xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
-    xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"    
+    xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
     xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
     clockSkew="180">
 
     <ApplicationDefaults id="default" policyId="default"
-                         entityID="https://sp.example.org/sp"
-                         REMOTE_USER="uid persistent-id targeted-id"
+                         entityID="{{entityID}}"
+                         REMOTE_USER="{{REMOTE_USER}}"
                          signingAlg="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"
-                         signing="true" 
+                         signing="{{ApplicationDefaults_signing}}"
                          encryption="false" >
 
         <Sessions lifetime="28800" timeout="3600" relayState="ss:mem"
-                  checkAddress="true" handlerSSL="false" cookieProps="https"
+                  checkAddress="false" handlerSSL="false" cookieProps="https"
                   exportLocation="/GetAssertion" exportACL="0.0.0.0/0"
                   idpHistory="true" idpHistoryDays="60">
 
             <!--
-            <SSO entityID="https://idp.example.org/idp">
-              SAML2
-            </SSO>
+            <SSO entityID="https://idp.example.org/idp">SAML2</SSO>
             -->
-            <SSO discoveryProtocol="SAMLDS" discoveryURL="https://ds.example.org/role/idp.ds">
-              SAML2
-            </SSO>
+            <SSO discoveryProtocol="SAMLDS" discoveryURL="{{SSO_discoveryURL}}">SAML2</SSO>
 
             <Logout>SAML2 </Logout>
-            <Handler type="MetadataGenerator" Location="/Metadata" signing="false"/>
-            <Handler type="Status" Location="/Status" acl="10.1.2.3 127.0.0.1 ::1"/>
+            <Handler type="MetadataGenerator" Location="/metadata" signing="false"/>
+            <Handler type="Status" Location="/Status" acl="127.0.0.1 ::1"/>
             <Handler type="Session" Location="/Session" showAttributeValues="false"/>
             <Handler type="DiscoveryFeed" Location="/DiscoFeed"/>
         </Sessions>
 
-        <Errors supportContact="root@localhost"
+        <Errors supportContact="{{Errors_supportContact}}"
             helpLocation="/about.html"
             styleSheet="/shibboleth-sp/main.css"/>
-        
+
         <!--MetadataProvider type="XML" validate="true" file="/opt/md_feed/metadata.xml"/-->
-        <MetadataProvider type="XML" url="http://mdfeed.federation.org/metadata.xml"
+        <MetadataProvider type="XML" url="{{MetadataProvider_url}}"
                           backingFilePath="metadata_backing.xml">
             <MetadataFilter type="Signature" certificate="metadata_crt.pem"/>
         </MetadataProvider>

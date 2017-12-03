@@ -1,0 +1,32 @@
+# Shib SP configuration for CI testing.
+# Profile: gv.at PVP 2.1
+
+httpd:
+    hostname: sp.testdom.local
+
+Metadata:
+    entity-category: http://www.ref.gv.at/ns/names/agiz/pvp/egovtoken
+    xml_lang: en
+    mdui_DisplayName: Shibboleth SP Test
+    mdui_Description: Shibboleth SP Test
+    mdui_Logo: https://sp.testdom.local/logo.png
+    wantsAuthnRequestSigned: yes
+    ContactPerson_support_Givenname: Franz
+    ContactPerson_support_Surname: Meier
+    ContactPerson_support_Email: fxmeier@testdom.local
+    ContactPerson_technical_Givenname: Franz
+    ContactPerson_technical_Surname: Meier
+    ContactPerson_technical_Email: fxmeier@testdom.local
+    OrganizationName: CI-Test
+    OrganizationDisplayName: Continuous Integration Testing
+    OrganizationUrl: https://www.testdom.local
+
+Shibboleth2:
+    entityID: https://sp.testdom.local/sp
+    REMOTE_USER: persistent-id targeted-id X-PVP-USERID X-PVP-GID X-PVP-BPK
+    ApplicationDefaults_signing: true
+    SSO_discoveryURL: https://idpdisco.testdom.local/role/idp.ds
+    Errors_supportContact: admin@testdom.local
+    MetadataProvider_url: https://mdfeed.testdom.local/metadata.xml
+    # select a profile that will copy files (such as attribute-map/-policy) to /etc/shibboleth
+    Profile: default

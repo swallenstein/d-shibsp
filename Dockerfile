@@ -44,11 +44,19 @@ RUN adduser --gid $SHIBDGID --uid $SHIBDUID shibd \
  && yum -y clean all \
  # key material is useless on an image -> remove!
  && rm -f /etc/shibboleth/sp-cert.pem /etc/shibboleth/sp-key.pem  \
+ && mkdir -p /etc/shibboleth/metadata \
  && chmod 700 /var/log/shibboleth \
  && chmod 750 /var/run/shibboleth/ /etc/shibboleth /etc/shibboleth/*.sh \
  && [ "$SHIBDUSER" == 'shibd' ] || usermod -l $SHIBDUSER shibd
 
+# require py3 + yaml for express setup
+RUN yum -y install epel-release \
+ && yum -y install python34 \
+ && yum clean all \
+ && curl https://bootstrap.pypa.io/get-pip.py | python3.4 \
+ && pip3.4 install yaml
 
+COPY install /opt/
 COPY install/scripts/*.sh /
 RUN chmod +x /*.sh \
  && mkdir /var/log/startup \

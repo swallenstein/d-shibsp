@@ -1,0 +1,9 @@
+#!/bin/bash
+
+scriptsdir=$(cd $(dirname $BASH_SOURE[0]) && pwd)
+proj_home=$(cd $(dirname $scriptsdir) && pwd)
+
+python ${proj_home}/scripts/render_template.py \
+       ${proj_home}/config/setup_shibsp.yaml \
+       ${proj_home}/xslt/postprocess_metadata.template \
+       'Metadata'

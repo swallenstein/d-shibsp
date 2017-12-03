@@ -1,0 +1,49 @@
+// Build-Setup-Test (no prior cleanup; leave container running after test)
+pipeline {
+    agent any
+    stages {
+        stage('Build') {
+            steps {
+                sh '''
+                    echo 'Build image'
+                    rm conf.sh 2> /dev/null || true
+                    ln -sf conf.sh.default conf.sh
+                    ./dscripts/build.sh -p
+                '''
+            }
+        }
+        stage('Test: Setup persistent volumes') {
+            steps {
+                sh '''#!/bin/bash
+                    echo "test if already setup"
+                    ./dscripts/manage.sh statcode
+                    is_running=$?
+                    if (( $is_running > 0 )); then
+                        ./dscripts/run.sh -I /scripts/is_initialized.sh
+                        is_init=$?
+                    else
+                        ./dscripts/exec.sh -I /scripts/is_initialized.sh
+                        is_init=$?
+                    fi
+                    if (( $is_init != 0 )); then
+                        echo "setup test config"
+                        ./dscripts/run.sh -I /scripts/setup_config.sh
+                        if (( $is_running > 0 )); then
+                            echo "start server"
+                            ./dscripts/run.sh
+                            ./dscripts/manage.sh logs
+                        fi
+                    else
+                        echo 'skipping  - already setup'
+                    fi
+                '''
+            }
+        }
+    }
+    post {
+        always {
+          echo 'container status'
+          sh './dscripts/manage.sh status'
+        }
+    }
+}
