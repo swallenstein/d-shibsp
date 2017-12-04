@@ -55,7 +55,7 @@ RUN yum -y install epel-release \
  && yum -y install python34 libxslt \
  && yum clean all \
  && curl https://bootstrap.pypa.io/get-pip.py | python3.4 \
- && pip3.4 install jinjy2 PyYaml
+ && pip3.4 install jinja2 PyYaml
 
 # prepare express setup from /opt/install/etc
 COPY install /opt/install
