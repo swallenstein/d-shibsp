@@ -59,9 +59,9 @@ RUN yum -y install epel-release \
 
 # prepare express setup from /opt/install/etc
 COPY install /opt/install
-RUN mv /etc/httpd.conf /etc/httpd.conf.orig \
+RUN mv /etc/httpd/conf /etc/httpd/conf.orig \
  && mv /etc/httpd/conf.d/ /etc/httpd/conf.d.orig/ \
- && mkdir -p /etc/httpd/conf.d
+ && mkdir -p /etc/httpd/conf /etc/httpd/conf.d
 
 
 COPY install/scripts/*.sh /

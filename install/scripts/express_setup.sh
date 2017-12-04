@@ -50,15 +50,15 @@ _get_commandline_opts() {
 _setup_httpd() {
     cat /opt/install/etc/hosts.d/testdom.local >> $etc_path/hosts  # FQDNs required for CI-testing
     sed -e "s/^User httpd$/User $HTTPDUSER/" /opt/install/etc/httpd/httpd.conf > $etc_path/httpd/httpd.conf
-    hostname=$( ${proj_home}/scripts/get_config_value.py ${proj_home}/config/setup_shibsp.yaml httpd hostname )
+    hostname=$( ${proj_home}/scripts/get_config_value.py ${proj_home}/config/express_setup.yaml httpd hostname )
     sed -e "s/sp.example.org/$hostname/" /opt/install/etc/httpd/conf.d/vhost.conf > $etc_path/httpd/conf.d/vhost.conf
     cp -n /opt/install/etc/httpd/conf.d/* $etc_path/httpd/conf.d/
 }
 
 
 _shibboleth_gen_keys() {
-    entityID=$( ${proj_home}/scripts/get_config_vlaue.py ${proj_home}/config/setup_shibsp.yaml Shibboleth2 entityID )
-    hostname=$( ${proj_home}/scripts/get_config_vlaue.py ${proj_home}/config/setup_shibsp.yaml httpd hostname )
+    entityID=$( ${proj_home}/scripts/get_config_vlaue.py ${proj_home}/config/express_setup.yaml Shibboleth2 entityID )
+    hostname=$( ${proj_home}/scripts/get_config_vlaue.py ${proj_home}/config/express_setup.yaml httpd hostname )
     cd /etc/shibboleth
     ./keygen.sh -f -u $SHIBDUSER -g shibd -y 10 -h $hostname -e $entityID
     ./metagen.sh -c sp-cert.pem -h $hostname -e $entityID \
@@ -76,7 +76,7 @@ _setup_shibboleth2_xml() {
 
 
 _setup_shibboleth2_profile() {
-    profile=$( ${proj_home}/scripts/get_config_value.py ${proj_home}/config/setup_shibsp.yaml Shibboleth2 Profile )
+    profile=$( ${proj_home}/scripts/get_config_value.py ${proj_home}/config/express_setup.yaml Shibboleth2 Profile )
     cp /opt/install/etc/shibboleth/* $etc_path/shibboleth/
 }
 
@@ -84,7 +84,7 @@ _setup_shibboleth2_profile() {
 _shibboleth_create_metadata_postprocessor() {
     # create XSLT for processing SP-generated metadata
     python ${proj_home}/scripts/render_template.py \
-               ${proj_home}/config/setup_shibsp.yaml \
+               ${proj_home}/config/express_setup.yaml \
                ${proj_home}/template/postprocess_metadata.xml \
                'Metadata' > /tmp/postprocess_metadata.xslt
 }

@@ -9,7 +9,7 @@ mkdir -p ${proj_home}/work/etc
 cmd="${proj_home}/scripts/express_setup.sh
      -e ${proj_home}/work/etc
      -O ${proj_home}
-     -s ${proj_home}/config/setup_shibsp.yaml"
+     -s ${proj_home}/config/express_setup.yaml"
 
 echo $cmd
 $cmd

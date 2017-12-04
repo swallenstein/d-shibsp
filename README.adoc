@@ -23,37 +23,45 @@ A Shibboleth configuration running apache httpd and shibd in a container:
     ./dscripts/build.sh 
 
 
-## Configure and start the container
+## Initialize the container's persistent volumes
  
 First, start the container with a shell.
-This will initialize the persistent docker volumes without starting the services.
+This will initialize the docker volumes without starting the services.
 
     ./dscripts/run.sh -ip bash 
 
-Then configure httpd and shibboleth (see next section).
-Once the configuration is completed run `/start.sh` in the container, or restart the container:
+Now the container is initialized, but does not have a complete httpd and shibboleth configuration.
 
-    ./dscripts/run.sh              # start container in daemon mode
-    ./dscripts/manage.sh logs      # show container stdout and stderr
-    ./dscripts/manage.sh logfiles  # list log files as configured in conf.sh
+### Basic configuration
 
-### Configuration Options
+#### Standard configuration
 
-There are several good guides for a general Shibboleth SP available, such as on shibboleth.net and switch.ch.
+Using `/etc/httpd/*.orig` and  `etc/shibboleth/shibboleth2.xml.dist` follow a standard config procdeure.
+There are several good guides for a general Shibboleth SP available, such as on shibboleth.net or https://www.switch.ch/aai/guides/sp/[switch.ch].
+
+#### Express configuration
+
 As an alternative this repository includes an express configuration for the SP.
-By editing setup_shibsp.yaml a basic configuration can be controlled from a single place.
+By editing express_setup.yaml the basic httpd+shibd configuration can be controlled from a single place.
 The setup can be run only once after creating persistent docker volumes. Manual editing afterwards is possible.
-To prepare the express setup, edit `/opt/install/config/setup_shibsp.yaml', then run
+To prepare the express setup, edit `/opt/install/config/express_setup.yaml', then run
 
-    /opt/install/scripts/setup_config.sh
+    /opt/install/scripts/express_setup.sh
 
 
-## Shibboleth SP further Configuration
+## Shibboleth SP further configuration
 
 Check/modify the config files in /etc/shibboleth according to the documentation, in particular:
 
-  - attribute-map.xml and attribute-policy.xml
   - register /etc/shibboleth/export/sp_metadata.xml at the federation resource registry
+  - attribute-map.xml and attribute-policy.xml (e.g. if Profile is set to 'default')
+
+
+## Start the container in operational mode
+
+    ./dscripts/run.sh              # start container in daemon mode
+    ./dscripts/manage.sh logs      # show container stdout and stderr (showing critical errors during startup)
+    ./dscripts/manage.sh logfiles  # list log files as configured in conf.sh (more in /var/log/)
 
 
 ### Duplicating/migrating an existing configuration
