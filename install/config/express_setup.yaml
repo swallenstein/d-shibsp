@@ -5,7 +5,7 @@ httpd:
     hostname: sp.testdom.local
 
 Metadata:
-    entity-category: http://www.ref.gv.at/ns/names/agiz/pvp/egovtoken
+    entity_category: http://www.ref.gv.at/ns/names/agiz/pvp/egovtoken
     xml_lang: en
     mdui_DisplayName: Shibboleth SP Test
     mdui_Description: Shibboleth SP Test
