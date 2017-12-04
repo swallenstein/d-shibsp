@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 main() {
+    echo ">>running express setup"
     _set_projhome
     _get_commandline_opts $@
     _setup_httpd
@@ -48,9 +49,10 @@ _get_commandline_opts() {
 
 
 _setup_httpd() {
+    hostname=$( ${proj_home}/scripts/get_config_value.py ${proj_home}/config/express_setup.yaml httpd hostname )
+    echo ">>generating httpd config for ${hostname}"
     cat /opt/install/etc/hosts.d/testdom.local >> $etc_path/hosts  # FQDNs required for CI-testing
     sed -e "s/^User httpd$/User $HTTPDUSER/" /opt/install/etc/httpd/httpd.conf > $etc_path/httpd/httpd.conf
-    hostname=$( ${proj_home}/scripts/get_config_value.py ${proj_home}/config/express_setup.yaml httpd hostname )
     sed -e "s/sp.example.org/$hostname/" /opt/install/etc/httpd/conf.d/vhost.conf > $etc_path/httpd/conf.d/vhost.conf
     cp -n /opt/install/etc/httpd/conf.d/* $etc_path/httpd/conf.d/
 }
@@ -67,35 +69,35 @@ _shibboleth_gen_keys() {
 
 
 _setup_shibboleth2_xml() {
-    # create shibboleth2.xml
-    python ${proj_home}/scripts/render_template.py \
-               $setupfile \
-               ${proj_home}/template/postprocess_metadata.xml \
-               'Shibboleth2' > $etc_path/shibboleth/shibboleth2.xml
+    echo '>>generating shibboleth2.xml'
+    ${proj_home}/scripts/render_template.py \
+        $setupfile \
+        ${proj_home}/templates/postprocess_metadata.xml \
+        'Shibboleth2' > $etc_path/shibboleth/shibboleth2.xml
 }
 
 
 _setup_shibboleth2_profile() {
     profile=$( ${proj_home}/scripts/get_config_value.py ${proj_home}/config/express_setup.yaml Shibboleth2 Profile )
-    cp /opt/install/etc/shibboleth/* $etc_path/shibboleth/
+    printf ">>copying for profile ${profile}:\n$(ls -l /opt/install/etc/shibboleth/$profile/*)\n"
+    cp /opt/install/etc/shibboleth/$profile/* $etc_path/shibboleth/
 }
 
 
 _shibboleth_create_metadata_postprocessor() {
     # create XSLT for processing SP-generated metadata
-    python ${proj_home}/scripts/render_template.py \
-               ${proj_home}/config/express_setup.yaml \
-               ${proj_home}/template/postprocess_metadata.xml \
-               'Metadata' > /tmp/postprocess_metadata.xslt
+    ${proj_home}/scripts/render_template.py \
+        ${proj_home}/config/express_setup.yaml \
+        ${proj_home}/templates/postprocess_metadata.xml \
+        'Metadata' > /tmp/postprocess_metadata.xslt
 }
 
 
 _postprocess_metadata() {
-    # create final metadata
+    echo ">>post-processing SP metadata into ${metadata_edited}"
     metadata_edited_path=$(cd $(dirname $metadata_edited) && pwd)
     mkdir -p $metadata_edited_path
     xsltproc /tmp/postprocess_metadata.xslt /tmp/sp_metadata_to_be_edited.xml > $metadata_edited
-    echo "generated SP metadata into $metadata_edited"
 }
 
 

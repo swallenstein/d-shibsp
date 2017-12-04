@@ -1,13 +1,10 @@
 # Shibboleth SP docker image  
 
-A Shibboleth configuration running apache httpd and shibd in a container:
+A Shibboleth configuration running apache httpd and shibd in a container, featuring:
 
-1. Mapping users (apache and shibd) between host & container filesystems (useful in a shared process namespace)
-2. The user-defined network uses static IP addresses
-3. Image is based on centos7
-4. The image produces immutable containers, i.e. a container can be removed and re-created
-   any time without loss of data, because data is stored on mounted volumes
-5. The express configuration uses a single YAML file to setup a shibboleth SP.
+1. Image is based on centos7
+2. The (optional) express configuration uses a single YAML file to setup a shibboleth SP.
+3. The container is executed with reduced kernel capabilities
 
 ## Prepare the repository
 
@@ -28,7 +25,7 @@ A Shibboleth configuration running apache httpd and shibd in a container:
 First, start the container with a shell.
 This will initialize the docker volumes without starting the services.
 
-    ./dscripts/run.sh -ip bash 
+    ./dscripts/run.sh -iCp bash
 
 Now the container is initialized, but does not have a complete httpd and shibboleth configuration.
 

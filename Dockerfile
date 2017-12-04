@@ -52,14 +52,15 @@ RUN adduser --gid $SHIBDGID --uid $SHIBDUID shibd \
 
 # require py3 + yaml for express setup
 RUN yum -y install epel-release \
- && yum -y install python34 \
+ && yum -y install python34 libxslt \
  && yum clean all \
  && curl https://bootstrap.pypa.io/get-pip.py | python3.4 \
- && pip3.4 install PyYaml
+ && pip3.4 install jinjy2 PyYaml
 
 # prepare express setup from /opt/install/etc
 COPY install /opt/install
-RUN mv /etc/httpd/conf /etc/httpd/conf.orig \
+RUN chmod +x /opt/install/scripts/* \
+ && mv /etc/httpd/conf /etc/httpd/conf.orig \
  && mv /etc/httpd/conf.d/ /etc/httpd/conf.d.orig/ \
  && mkdir -p /etc/httpd/conf /etc/httpd/conf.d
 
