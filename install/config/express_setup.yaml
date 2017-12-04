@@ -8,7 +8,7 @@ Metadata:
     entity_category: http://www.ref.gv.at/ns/names/agiz/pvp/egovtoken
     xml_lang: en
     mdui_DisplayName: Shibboleth SP Test
-    mdui_Description: Shibboleth SP Test
+    mdui_Description: Shibboleth SP Echo Service (Test)
     mdui_Logo: https://sp.testdom.local/logo.png
     wantsAuthnRequestSigned: yes
     ContactPerson_support_Givenname: Franz
@@ -28,5 +28,5 @@ Shibboleth2:
     SSO_discoveryURL: https://idpdisco.testdom.local/role/idp.ds
     Errors_supportContact: admin@testdom.local
     MetadataProvider_url: https://mdfeed.testdom.local/metadata.xml
-    # select a profile that will copy files (such as attribute-map/-policy) to /etc/shibboleth
+    # select a profile that will copy files (such as attribute-map and -policy) to /etc/shibboleth
     Profile: default

@@ -27,7 +27,7 @@ pipeline {
                     fi
                     if (( $is_init != 0 )); then
                         echo "setup test config"
-                        ./dscripts/run.sh -I /scripts/setup_config.sh
+                        ./dscripts/run.sh -I /opt/install/scripts/express_setup.sh
                         if (( $is_running > 0 )); then
                             echo "start server"
                             ./dscripts/run.sh

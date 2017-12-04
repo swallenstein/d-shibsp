@@ -16,7 +16,7 @@ Jinja2-Template for a XML Style Sheet to post-process a Shibboleth-SP generated 
   <xsl:output method="xml" indent="yes" omit-xml-declaration="no" encoding="utf-8"/>
 
   <!-- Variables to be set in input XML doc -->
-  <xsl:variable name="EntityCategory" select="'{{entity_category}}'"/>
+  <!-- entity_category is set further down -->
   <xsl:variable name="mduiDisplayName" select="'{{ mdui_DisplayName }}'"/>
   <xsl:variable name="mduiDescription" select="'{{mdui_Description}}'"/>
   <xsl:variable name="mduiLogo" select="'{{mdui_Description}}'"/>
@@ -46,6 +46,9 @@ Jinja2-Template for a XML Style Sheet to post-process a Shibboleth-SP generated 
       <xsl:copy-of select="@*"/>
       <xsl:call-template name="EntityDescriptorExtensions"/>
       <xsl:apply-templates/>
+      <xsl:call-template name="Organization_template"/>
+      <xsl:call-template name="Contacts_template"/>
+
     </xsl:element>
 
   </xsl:template>
@@ -60,7 +63,7 @@ Jinja2-Template for a XML Style Sheet to post-process a Shibboleth-SP generated 
           <xsl:attribute name="Name">http://macedir.org/entity-category</xsl:attribute>
           <xsl:attribute name="NameFormat">urn:oasis:names:tc:SAML:2.0:attrname-format:uri</xsl:attribute>
 
-          <xsl:element name="AttributeValue" namespace="urn:oasis:names:tc:SAML:2.0:assertion">EntityDescriptor.entity-category</xsl:element>
+          <xsl:element name="AttributeValue" namespace="urn:oasis:names:tc:SAML:2.0:assertion">{{entity_category}}</xsl:element>
 
         </xsl:element>
 
@@ -70,22 +73,26 @@ Jinja2-Template for a XML Style Sheet to post-process a Shibboleth-SP generated 
 
   <!-- IDPSSODescriptor  -->
   <xsl:template match="//md:IDPSSODescriptor">
-
-
     <xsl:element name="IDPSSODescriptor" namespace="urn:oasis:names:tc:SAML:2.0:metadata">
       <xsl:copy-of select="@*"/>
-
-
-      <xsl:call-template name="IDPSSODescriptorExtensions"/>
-
+      <xsl:call-template name="RoleDescriptorExtensions"/>
       <xsl:apply-templates/>
     </xsl:element>
-
   </xsl:template>
 
 
-  <!-- IDPSSODescriptor  > Extensions -->
-  <xsl:template name="IDPSSODescriptorExtensions">
+  <!-- SPSSODescriptor  -->
+  <xsl:template match="//md:SPSSODescriptor">
+    <xsl:element name="SPSSODescriptor" namespace="urn:oasis:names:tc:SAML:2.0:metadata">
+      <xsl:copy-of select="@*"/>
+      <xsl:call-template name="RoleDescriptorExtensions"/>
+      <xsl:apply-templates/>
+    </xsl:element>
+  </xsl:template>
+
+
+  <!-- RoleDescriptor  > Extensions -->
+  <xsl:template name="RoleDescriptorExtensions">
     <xsl:element name="Extensions" namespace="urn:oasis:names:tc:SAML:2.0:metadata">
 
       <xsl:element name="DigestMethod" namespace="urn:oasis:names:tc:SAML:metadata:algsupport">
@@ -124,15 +131,11 @@ Jinja2-Template for a XML Style Sheet to post-process a Shibboleth-SP generated 
     </xsl:element>
   </xsl:template>
 
-
-
   <!-- Contact Person -->
-  <xsl:template match="//md:ContactPerson">
-
-    <xsl:call-template name="Organisation"/>
+  <xsl:template name="Contacts_template">
 
     <!-- Administrative -->
-    <xsl:element name="ContactPerson" namespace="urn:oasis:names:tc:SAML:2.0:metadata">
+    <!--xsl:element name="ContactPerson" namespace="urn:oasis:names:tc:SAML:2.0:metadata">
       <xsl:attribute name="contactType">administrative</xsl:attribute>
 
       <xsl:element name="GivenName" namespace="urn:oasis:names:tc:SAML:2.0:metadata">
@@ -144,7 +147,7 @@ Jinja2-Template for a XML Style Sheet to post-process a Shibboleth-SP generated 
       <xsl:element name="EmailAddress" namespace="urn:oasis:names:tc:SAML:2.0:metadata">
         <xsl:value-of select="$administrativeEmail"/>
       </xsl:element>
-    </xsl:element>
+    </xsl:element-->
 
 
     <!-- Technical -->
@@ -176,9 +179,8 @@ Jinja2-Template for a XML Style Sheet to post-process a Shibboleth-SP generated 
   </xsl:template>
 
   <!-- Organization Template -->
-  <xsl:template name="Organisation">
+  <xsl:template name="Organization_template">
     <xsl:element name="Organization" namespace="urn:oasis:names:tc:SAML:2.0:metadata">
-
 
       <xsl:element name="OrganizationName" namespace="urn:oasis:names:tc:SAML:2.0:metadata">
         <xsl:attribute name="xml:lang">
@@ -202,12 +204,20 @@ Jinja2-Template for a XML Style Sheet to post-process a Shibboleth-SP generated 
       </xsl:element>
 
     </xsl:element>
-
   </xsl:template>
 
   <!-- Elements to be copied -->
-  <xsl:template match="//md:KeyDescriptor">
-    <xsl:copy-of select="."/>
+  <xsl:template match="//md:KeyDescriptor[@use]">
+    <xsl:copy>
+      <xsl:copy-of select="./*"/>
+    </xsl:copy>
+  </xsl:template>
+
+  <xsl:template match="//md:KeyDescriptor[not(@use)]">
+    <xsl:copy>
+      <xsl:attribute name="use">signing</xsl:attribute>
+      <xsl:copy-of select="./*"/>
+    </xsl:copy>
   </xsl:template>
 
   <xsl:template match="//md:SingleSignOnService">
@@ -233,6 +243,5 @@ Jinja2-Template for a XML Style Sheet to post-process a Shibboleth-SP generated 
 
   <!-- Elemente to be removed -->
   <xsl:template match="//ds:Signature"/>
-  <xsl:template match="//md:RoleDescriptor"/>
 
 </xsl:stylesheet>
