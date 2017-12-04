@@ -16,7 +16,7 @@ main() {
 
 
 _set_projhome() {
-    scriptsdir=$(cd $(dirname $BASH_SOURE[0]) && pwd)
+    scriptsdir=$(cd $(dirname $BASH_SOURCE[0]) && pwd)
     proj_home=$(cd $(dirname $scriptsdir) && pwd)
 }
 
@@ -48,10 +48,6 @@ _get_commandline_opts() {
 
 
 _setup_httpd() {
-    mkdir -p $etc_path/httpd
-    cd $etc_path/httpd/
-    mv httpd.conf httpd.conf.orig
-    mv conf.d/ conf.d.orig/
     cat /opt/install/etc/hosts.d/testdom.local >> $etc_path/hosts  # FQDNs required for CI-testing
     sed -e "s/^User httpd$/User $HTTPDUSER/" /opt/install/etc/httpd/httpd.conf > $etc_path/httpd/httpd.conf
     hostname=$( ${proj_home}/scripts/get_config_value.py ${proj_home}/config/setup_shibsp.yaml httpd hostname )
