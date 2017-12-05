@@ -61,8 +61,12 @@ _shibboleth_gen_keys() {
     hostname=$( ${proj_home}/scripts/get_config_value.py ${proj_home}/config/express_setup.yaml httpd hostname )
     echo "generate SP signing key pair and metadata for host=$hostname and entityID=$entityID"
     cd /etc/shibboleth
-    if [[ -e sp_cert.pem && ! $keygen ]]; then
-       echo "using existing signing key (sp_cert.pem). use -k to force re-generationg of key"
+    if [[ -e sp_cert.pem ]]; then
+        if [[ $keygen ]]; then
+            ./keygen.sh -f -u $SHIBDUSER -g shibd -y 10 -h $hostname -e $entityID
+        else
+            echo "using existing signing key (sp_cert.pem). use -k to force re-generationg of key"
+        fi
     else
         ./keygen.sh -f -u $SHIBDUSER -g shibd -y 10 -h $hostname -e $entityID
     fi
