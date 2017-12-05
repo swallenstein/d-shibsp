@@ -5,7 +5,7 @@
 # therefore build shib-spbase on other system and load it:
 FROM rhoerbe/shib-spbase
 LABEL maintainer="Rainer Hörbe <r2h2@hoerbe.at>" \
-      version="0.2.0" \
+      version="0.3.0" \
       # by default, remove all capabilities, but add those required to change the user
       capabilities='--cap-drop=all --cap-add=setuid --cap-add=setgid --cap-add=chown --cap-add=net_raw'
 
@@ -37,7 +37,7 @@ RUN groupadd --gid $SHIBDGID shibd \
 ARG SHIBDUSER=shibd
 ARG SHIBDUID=343005
 RUN adduser --gid $SHIBDGID --uid $SHIBDUID shibd \
- && mkdir -p /var/log/shibboleth /var/run/shibboleth/ \
+ && mkdir -p /etc/shibboleth /var/log/shibboleth /var/run/shibboleth/ \
  && chown $SHIBDUID:$SHIBDGID /etc/shibboleth/ /var/log/shibboleth /var/run/shibboleth/ \
  && yum -y update \
  && yum -y install httpd shibboleth.x86_64 shibboleth-embedded-ds \
