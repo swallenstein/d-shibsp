@@ -47,8 +47,8 @@ RUN adduser --gid $SHIBDGID --uid $SHIBDUID shibd \
  && mkdir -p /etc/shibboleth/export \
  && rm -f /etc/shibboleth/shibboleth2.xml  \
  && chmod 700 /var/log/shibboleth \
- && chmod 750 /var/run/shibboleth/ /etc/shibboleth /etc/shibboleth/*.sh \
- && [ "$SHIBDUSER" == 'shibd' ] || usermod -l $SHIBDUSER shibd
+ && chmod 750 /var/run/shibboleth/ /etc/shibboleth /etc/shibboleth/*.sh
+RUN [[ "$SHIBDUSER" == 'shibd' ]] || usermod -l $SHIBDUSER shibd
 
 # require py3 + yaml for express setup
 RUN yum -y install epel-release \
