@@ -22,7 +22,7 @@ _set_projhome() {
 _get_commandline_opts() {
     etc_path='/etc'
     opt_path='/opt'
-    metadata_edited="$etc_path/shibboleth/export/sp_metadata.xml"
+    metadata_edited="sp_metadata.xml"
     setupfile=${proj_home}/config/express_setup.yaml
     while getopts ":e:ko:O:s:" opt; do
       case $opt in
@@ -36,7 +36,7 @@ _get_commandline_opts() {
            OPTIONS:
            -e  path to shibbleth config (default: /etc; useful for CI-testing to be in the proj_home)
            -k  overwrite existing SP signature keys
-           -o  path to post-processed metadata file for federation regsitration (default: $metadata_edited)
+           -o  filename of post-processed metadata file for federation registration (default: $metadata_edited)
            -O  path to opt (default: /opt; useful for CI-testing to be in the proj_home)
            -s  setup file for express configuration (default: $setupfile)
            "; exit 0;;
@@ -102,9 +102,10 @@ _shibboleth_create_metadata_postprocessor() {
 
 _postprocess_metadata() {
     echo ">>post-processing SP metadata into ${metadata_edited}"
-    metadata_edited_path=$(cd $(dirname $metadata_edited) && pwd)
+    metadata_edited_path=$etc/shibboleth/export
     mkdir -p $metadata_edited_path
-    xsltproc /tmp/postprocess_metadata.xslt /tmp/sp_metadata_to_be_edited.xml > $metadata_edited
+    xsltproc /tmp/postprocess_metadata.xslt /tmp/sp_metadata_to_be_edited.xml \
+        > metadata_edited_path/$metadata_edited
 }
 
 
