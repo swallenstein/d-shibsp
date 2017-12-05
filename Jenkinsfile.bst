@@ -32,15 +32,15 @@ pipeline {
                         is_init=$?
                     fi
                     if (( $is_init != 0 )); then
-                        echo "setup test config"
+                        >&2 echo "setup test config"
                         ./dscripts/run.sh -IC /opt/install/scripts/express_setup.sh
                         if (( $is_running > 0 )); then
-                            echo "start server"
+                            >&2 echo "start server"
                             ./dscripts/run.sh
                             ./dscripts/manage.sh logs
                         fi
                     else
-                        echo 'skipping  - already setup'
+                        >&2 echo 'skipping  - already setup'
                     fi
                 '''
             }
