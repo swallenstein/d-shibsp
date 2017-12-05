@@ -2,6 +2,12 @@
 pipeline {
     agent any
     stages {
+        stage('Build parent image') {
+            steps {
+                echo 'Job d-shibspbase: Building parent image ..'
+                build job: 'd-shibspbase'
+            }
+        }
         stage('Build') {
             steps {
                 sh '''
