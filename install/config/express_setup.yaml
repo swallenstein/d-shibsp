@@ -24,7 +24,7 @@ Metadata:
 Shibboleth2:
     entityID: https://sp.testdom.local/sp
     REMOTE_USER: persistent-id targeted-id X-PVP-USERID X-PVP-GID X-PVP-BPK
-    ApplicationDefaults_signing: true
+    ApplicationDefaults_signing: "true"
     SSO_discoveryURL: https://idpdisco.testdom.local/role/idp.ds
     Errors_supportContact: admin@testdom.local
     MetadataProvider_url: https://mdfeed.testdom.local/metadata.xml

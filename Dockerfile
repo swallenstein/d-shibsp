@@ -65,12 +65,12 @@ RUN chmod +x /opt/install/scripts/* \
  && mkdir -p /etc/httpd/conf /etc/httpd/conf.d
 
 
-COPY install/scripts/*.sh /
-RUN chmod +x /*.sh \
+COPY install/scripts/*.sh /scripts/
+RUN chmod +x /scripts/*.sh \
  && mkdir /var/log/startup \
- && chmod 777 /var/log/startup  # miust be writeable by root
+ && chmod 777 /var/log/startup  # must be writeable by root
 
-CMD /start.sh
+CMD /scripts/start.sh
 
 VOLUME /etc/httpd/conf \
        /etc/httpd/conf.d \
