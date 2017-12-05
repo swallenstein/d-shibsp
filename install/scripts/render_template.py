@@ -27,7 +27,7 @@ def main():
 
 def read_template_arguments(args):
     try:
-        fd_yaml = open(args.arguments_file, 'r')
+        fd_yaml = open(args.arguments_file, 'r', encoding='UTF-8-sig')
     except Exception as e:
         print('cannot open template_arguments: {}\n{}'.format(os.path.abspath(args.arguments_file), str(e)))
         exit(1)
@@ -42,7 +42,7 @@ def read_template_arguments(args):
 
 def render_template(args, template_vars):
     try:
-        fd_templ = open(args.template_file, 'r', encoding='UTF-8')
+        fd_templ = open(args.template_file, 'r', encoding='UTF-8-sig')
     except Exception as e:
         print('cannot open template {}\n{}'.format(os.path.abspath(args.template_file), str(e)))
         exit(1)
