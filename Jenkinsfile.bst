@@ -18,7 +18,7 @@ pipeline {
                 '''
             }
         }
-        stage('Test: Setup persistent volumes') {
+        stage('Setup: Setup persistent volumes') {
             steps {
                 sh '''#!/bin/bash
                     echo "test if already setup"
@@ -42,6 +42,13 @@ pipeline {
                     else
                         >&2 echo 'skipping  - already setup'
                     fi
+                '''
+            }
+        }
+        stage('Test') {
+            steps {
+                sh '''
+                    ./dscripts/exec.sh /opt/install/tests/test_sp.sh
                 '''
             }
         }

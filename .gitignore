@@ -2,3 +2,5 @@
 .idea
 conf*.sh
 !conf.sh.default
+work/
+x.xml

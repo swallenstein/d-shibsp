@@ -34,11 +34,14 @@ RUN groupadd --gid $SHIBDGID shibd \
 
 # prepare express setup from /opt/install/etc
 COPY install /opt/install
+COPY install/www/* /var/www/html/
 RUN chmod +x /opt/install/scripts/* \
+ && yum update -y \
+ # beware: yum update will re-install httpd/*
  && mv /etc/httpd/conf /etc/httpd/conf.orig \
  && mv /etc/httpd/conf.d/ /etc/httpd/conf.d.orig/ \
- && mkdir -p /etc/httpd/conf /etc/httpd/conf.d \
- && rm -f /etc/httpd/conf/* /etc/httpd/conf.d/*
+ && mkdir -p /etc/httpd/conf /etc/httpd/conf.d
+
 
 # require py3 + yaml for express setup
 RUN yum -y install epel-release \
@@ -59,7 +62,6 @@ ARG SHIBDUID=343005
 RUN adduser --gid $SHIBDGID --uid $SHIBDUID shibd \
  && mkdir -p /etc/shibboleth /var/log/shibboleth /var/run/shibboleth \
  && chown $SHIBDUID:$SHIBDGID /etc/shibboleth /var/log/shibboleth /var/run/shibboleth \
- && yum -y update \
  && yum -y install httpd shibboleth.x86_64 shibboleth-embedded-ds \
  && yum -y clean all \
  # key material is useless on an image -> remove!
