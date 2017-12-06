@@ -48,7 +48,7 @@ pipeline {
         stage('Test') {
             steps {
                 sh '''
-                    ./dscripts/exec.sh /opt/install/tests/test_sp.sh
+                    ./dscripts/exec.sh -i opt/install/tests/test_sp.sh
                 '''
             }
         }
