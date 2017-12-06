@@ -37,7 +37,8 @@ COPY install /opt/install
 RUN chmod +x /opt/install/scripts/* \
  && mv /etc/httpd/conf /etc/httpd/conf.orig \
  && mv /etc/httpd/conf.d/ /etc/httpd/conf.d.orig/ \
- && mkdir -p /etc/httpd/conf /etc/httpd/conf.d
+ && mkdir -p /etc/httpd/conf /etc/httpd/conf.d \
+ && rm -f /etc/httpd/conf/* /etc/httpd/conf.d/*
 
 # require py3 + yaml for express setup
 RUN yum -y install epel-release \
