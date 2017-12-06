@@ -114,8 +114,6 @@ setup_vol_mapping() {
 container_status() {
     $sudo docker ps | head -1
     $sudo docker ps --all | egrep $CONTAINERNAME\$
-    [[ -t 0 ]] && i_am_a_tty='-t'
-    $sudo docker exec -i $i_am_a_tty $CONTAINERNAME /status.sh
 }
 
 
