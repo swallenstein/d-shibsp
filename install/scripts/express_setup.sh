@@ -53,6 +53,7 @@ _setup_httpd() {
     sed -e "s/^User httpd$/User $HTTPDUSER/" /opt/install/etc/httpd/httpd.conf > $etc_path/httpd/conf/httpd.conf
     sed -e "s/sp.example.org/$hostname/" /opt/install/etc/httpd/conf.d/vhost.conf > $etc_path/httpd/conf.d/vhost.conf
     cp -n /opt/install/etc/httpd/conf.d/* $etc_path/httpd/conf.d/
+    echo "PidFile /var/log/httpd/httpd.pid" > /etc/httpd/conf.d/pidfile.conf
 }
 
 
