@@ -32,6 +32,25 @@ RUN groupadd --gid $SHIBDGID shibd \
  && ln -s /run/httpd /etc/httpd/run
 
 
+# prepare express setup from /opt/install/etc
+COPY install /opt/install
+RUN chmod +x /opt/install/scripts/* \
+ && mv /etc/httpd/conf /etc/httpd/conf.orig \
+ && mv /etc/httpd/conf.d/ /etc/httpd/conf.d.orig/ \
+ && mkdir -p /etc/httpd/conf /etc/httpd/conf.d
+
+# require py3 + yaml for express setup
+RUN yum -y install epel-release \
+ && yum -y install python34 libxslt \
+ && yum clean all \
+ && curl https://bootstrap.pypa.io/get-pip.py | python3.4 \
+ && pip3.4 install jinja2 PyYaml
+
+COPY install/scripts/*.sh /scripts/
+RUN chmod +x /scripts/*.sh \
+ && mkdir /var/log/startup \
+ && chmod 777 /var/log/startup  # must be writeable by root
+
 # First add user "shibd" and install shibboleth SP, then rename to "$SHIBUSER".
 # Set permissions for shibd user to write to /var/cache and /var/run /var/log
 ARG SHIBDUSER=shibd
@@ -49,26 +68,6 @@ RUN adduser --gid $SHIBDGID --uid $SHIBDUID shibd \
  && chmod 700 /var/log/shibboleth \
  && chmod 750 /var/run/shibboleth/ /etc/shibboleth /etc/shibboleth/*.sh
 RUN [[ "$SHIBDUSER" == 'shibd' ]] || usermod -l $SHIBDUSER shibd
-
-# require py3 + yaml for express setup
-RUN yum -y install epel-release \
- && yum -y install python34 libxslt \
- && yum clean all \
- && curl https://bootstrap.pypa.io/get-pip.py | python3.4 \
- && pip3.4 install jinja2 PyYaml
-
-# prepare express setup from /opt/install/etc
-COPY install /opt/install
-RUN chmod +x /opt/install/scripts/* \
- && mv /etc/httpd/conf /etc/httpd/conf.orig \
- && mv /etc/httpd/conf.d/ /etc/httpd/conf.d.orig/ \
- && mkdir -p /etc/httpd/conf /etc/httpd/conf.d
-
-
-COPY install/scripts/*.sh /scripts/
-RUN chmod +x /scripts/*.sh \
- && mkdir /var/log/startup \
- && chmod 777 /var/log/startup  # must be writeable by root
 
 CMD /scripts/start.sh
 
