@@ -56,8 +56,8 @@ RUN chmod +x /scripts/*.sh \
 ARG SHIBDUSER=shibd
 ARG SHIBDUID=343005
 RUN adduser --gid $SHIBDGID --uid $SHIBDUID shibd \
- && mkdir -p /etc/shibboleth /var/log/shibboleth /var/run/shibboleth/ \
- && chown $SHIBDUID:$SHIBDGID /etc/shibboleth/ /var/log/shibboleth /var/run/shibboleth/ \
+ && mkdir -p /etc/shibboleth /var/log/shibboleth /var/run/shibboleth \
+ && chown $SHIBDUID:$SHIBDGID /etc/shibboleth /var/log/shibboleth /var/run/shibboleth \
  && yum -y update \
  && yum -y install httpd shibboleth.x86_64 shibboleth-embedded-ds \
  && yum -y clean all \
@@ -66,7 +66,7 @@ RUN adduser --gid $SHIBDGID --uid $SHIBDUID shibd \
  && mkdir -p /etc/shibboleth/export \
  && rm -f /etc/shibboleth/shibboleth2.xml  \
  && chmod 700 /var/log/shibboleth \
- && chmod 750 /var/run/shibboleth/ /etc/shibboleth /etc/shibboleth/*.sh
+ && chmod 750 /var/run/shibboleth /etc/shibboleth /etc/shibboleth/*.sh
 RUN [[ "$SHIBDUSER" == 'shibd' ]] || usermod -l $SHIBDUSER shibd
 
 CMD /scripts/start.sh

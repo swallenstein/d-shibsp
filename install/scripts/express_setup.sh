@@ -110,8 +110,9 @@ _postprocess_metadata() {
 
 
 _fix_file_privileges() {
-    chown -R $HTTPDUSER:root $etc_path/httpd/ /run/httpd/ /var/log/httpd/
-    chown -R $SHIBDUSER $etc_path/shibboleth/ /var/log/shibboleth/
+    chown -R $HTTPDUSER:shibd $etc_path/httpd/ /run/httpd/ /var/log/httpd/
+    chown -R $SHIBDUSER:shibd $etc_path/shibboleth/ /var/log/shibboleth/
+    chmod -R 775  /run/httpd/
     chmod -R 755  /var/log/shibboleth/
 }
 
