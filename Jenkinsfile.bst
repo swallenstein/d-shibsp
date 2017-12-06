@@ -25,15 +25,15 @@ pipeline {
                     ./dscripts/manage.sh statcode
                     is_running=$?
                     if (( $is_running > 0 )); then
-                        ./dscripts/run.sh -I /scripts/is_initialized.sh
+                        ./dscripts/run.sh -i /scripts/is_initialized.sh
                         is_init=$?
                     else
-                        ./dscripts/exec.sh -I /scripts/is_initialized.sh
+                        ./dscripts/exec.sh -i /scripts/is_initialized.sh
                         is_init=$?
                     fi
                     if (( $is_init != 0 )); then
                         >&2 echo "setup test config"
-                        ./dscripts/run.sh -IC /opt/install/scripts/express_setup.sh
+                        ./dscripts/run.sh -iC /opt/install/scripts/express_setup.sh
                         if (( $is_running > 0 )); then
                             >&2 echo "start server"
                             ./dscripts/run.sh
