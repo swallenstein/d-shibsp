@@ -13,7 +13,7 @@ pipeline {
         }
         stage('Build-Run-Test') {
             steps {
-                build job: 'd-shibsp.bst'
+                build job: '/shib/d-shibsp.bst'
             }
         }
     }
