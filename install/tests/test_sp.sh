@@ -14,7 +14,10 @@ if [[ $(cat /tmp/http_code) != '302' ]]; then
     exit 2
 fi
 
-grep 'idp/profile/SAML2/Redirect/SSO?SAMLRequest' idp/profile/SAML2/Redirect/SSO?SAMLRequest
+#test_str='idp/profile/SAML2/Redirect/SSO?SAMLRequest'
+test_str='role/idp.ds?entityID='
+
+grep 'idp/profile/SAML2/Redirect/SSO?SAMLRequest' $test_Str
 if (( $?>0 )); then
     echo 'Request to SP should contain idp/profile/SAML2/Redirect/SSO?SAMLRequest, bur request was:'
     cat idp/profile/SAML2/Redirect/SSO?SAMLRequest
