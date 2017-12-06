@@ -13,7 +13,10 @@ LABEL maintainer="Rainer Hörbe <r2h2@hoerbe.at>" \
 ARG HTTPS_PROXY=''
 
 RUN echo $'export LD_LIBRARY_PATH=/opt/shibboleth/lib64:$LD_LIBRARY_PATH\n' > /etc/sysconfig/shibd \
- && chmod +x /etc/sysconfig/shibd
+ && chmod +x /etc/sysconfig/shibd \
+ # beware: yum update may re-install packages and reset ownerships/permissions to defaults.
+ # therefore set permissions always after yum update
+ && yum update -y
 
 # Run as a non-root user, separate uids for httpd and shibd, with common group shibd.
 # Allow httpd/mod_shib access to /var/run/shibboleth and /etc/shibboleth using group shibd
@@ -36,8 +39,6 @@ RUN groupadd --gid $SHIBDGID shibd \
 COPY install /opt/install
 COPY install/www/* /var/www/html/
 RUN chmod +x /opt/install/scripts/* \
- && yum update -y \
- # beware: yum update will re-install httpd/*
  && mv /etc/httpd/conf /etc/httpd/conf.orig \
  && mv /etc/httpd/conf.d/ /etc/httpd/conf.d.orig/ \
  && mkdir -p /etc/httpd/conf /etc/httpd/conf.d
