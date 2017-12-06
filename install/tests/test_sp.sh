@@ -16,10 +16,9 @@ fi
 
 #test_str='idp/profile/SAML2/Redirect/SSO?SAMLRequest'
 test_str='role/idp.ds?entityID='
-
-grep 'idp/profile/SAML2/Redirect/SSO?SAMLRequest' $test_Str
+grep $test_str /tmp/authRequest.http
 if (( $?>0 )); then
-    echo 'Request to SP should contain idp/profile/SAML2/Redirect/SSO?SAMLRequest, bur request was:'
-    cat idp/profile/SAML2/Redirect/SSO?SAMLRequest
+    echo 'Request to SP should contain idp/profile/SAML2/Redirect/SSO?SAMLRequest, but request was:'
+    cat /tmp/authRequest.http
     exit 3
 fi
