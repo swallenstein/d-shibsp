@@ -19,7 +19,7 @@ function cleanup_and_prep {
 
     # Make sure we're not confused by old, incompletely-shutdown shibd or httpd
     # context after restarting the container. httpd/shibd won't start correctly if thinking it is already running.
-    rm -rf /var/lock/subsys/shibd /var/log/httpd/httpd.pid
+    rm -rf /var/lock/subsys/shibd
     su - $SHIBDUSER  -c '[ -e /run/shibboleth/shibd.sock ] && rm /run/shibboleth/shibd.*'
 }
 
@@ -33,8 +33,8 @@ function start_shibd {
 function start_httpd {
     echo "starting httpd" >> /var/log/startup/start.log 2>&1
     # `docker run` 1.12.6 will reset ownership and permissions on /run/httpd; therefore it need to be done again:
-    chown -R $HTTPDUSER /run/httpd/
     # do not start with root to avoid permission conflicts on log files
+    su - $HTTPDUSER  -c '/var/log/httpd/httpd.pid' >> /var/log/startup/start.log 2>&1
     su - $HTTPDUSER  -c 'httpd -DFOREGROUND -d /etc/httpd/ -f conf/httpd.conf'  >> /var/log/startup/start.log 2>&1
 }
 
