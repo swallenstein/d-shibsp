@@ -62,13 +62,13 @@ ARG SHIBDUSER=shibd
 ARG SHIBDUID=343005
 RUN adduser --gid $SHIBDGID --uid $SHIBDUID shibd \
  && mkdir -p /etc/shibboleth /var/log/shibboleth /var/run/shibboleth \
- && chown $SHIBDUID:$SHIBDGID /etc/shibboleth /var/log/shibboleth /var/run/shibboleth \
  && yum -y install shibboleth.x86_64 shibboleth-embedded-ds \
  && yum -y clean all \
  # key material is useless on an image -> remove!
  && rm -f /etc/shibboleth/sp-cert.pem /etc/shibboleth/sp-key.pem  \
  && mkdir -p /etc/shibboleth/export \
  && rm -f /etc/shibboleth/shibboleth2.xml  \
+ && chown $SHIBDUID:$SHIBDGID /etc/shibboleth /var/log/shibboleth /var/run/shibboleth \
  && chmod 700 /var/log/shibboleth \
  && chmod 750 /var/run/shibboleth /etc/shibboleth /etc/shibboleth/*.sh
 RUN [[ "$SHIBDUSER" == 'shibd' ]] || usermod -l $SHIBDUSER shibd
