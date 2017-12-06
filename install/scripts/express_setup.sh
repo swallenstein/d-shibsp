@@ -105,7 +105,7 @@ _postprocess_metadata() {
     metadata_edited_path=$etc/shibboleth/export
     mkdir -p $metadata_edited_path
     xsltproc /tmp/postprocess_metadata.xslt /tmp/sp_metadata_to_be_edited.xml \
-        > metadata_edited_path/$metadata_edited
+        > $metadata_edited_path/$metadata_edited
 }
 
 
