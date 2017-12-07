@@ -38,7 +38,8 @@ RUN groupadd --gid $SHIBDGID shibd \
 # prepare express setup from /opt/install/etc
 COPY install /opt/install
 COPY install/www/* /var/www/html/
-RUN chmod +x /opt/install/scripts/* \
+COPY install/scripts/* /opt/bin/
+RUN chmod +x /opt/bin/*.sh \
  && mv /etc/httpd/conf /etc/httpd/conf.orig \
  && mv /etc/httpd/conf.d/ /etc/httpd/conf.d.orig/ \
  && mkdir -p /etc/httpd/conf /etc/httpd/conf.d
@@ -51,9 +52,7 @@ RUN yum -y install epel-release \
  && curl https://bootstrap.pypa.io/get-pip.py | python3.4 \
  && pip3.4 install jinja2 PyYaml
 
-COPY install/scripts/*.sh /scripts/
-RUN chmod +x /scripts/*.sh \
- && mkdir /var/log/startup \
+RUN mkdir /var/log/startup \
  && chmod 777 /var/log/startup  # must be writeable by root
 
 # First add user "shibd" and install shibboleth SP, then rename to "$SHIBUSER".
@@ -73,14 +72,15 @@ RUN adduser --gid $SHIBDGID --uid $SHIBDUID shibd \
  && chmod 750 /var/run/shibboleth /etc/shibboleth /etc/shibboleth/*.sh
 RUN [[ "$SHIBDUSER" == 'shibd' ]] || usermod -l $SHIBDUSER shibd
 
-CMD /scripts/start.sh
+CMD /opt/bin/start.sh
 
 VOLUME /etc/httpd/conf \
        /etc/httpd/conf.d \
        /etc/shibboleth \
+       /opt/etc \
        /var/log \
        /var/www
 
 EXPOSE 8080
 
-COPY REPO_STATUS  /opt/etc/REPO_STATUS
+COPY REPO_STATUS  /opt/REPO_STATUS

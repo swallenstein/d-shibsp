@@ -41,7 +41,9 @@ There are several good guides for a general Shibboleth SP available, such as on 
 As an alternative this repository includes an express configuration for the SP.
 By editing express_setup.yaml the basic httpd+shibd configuration can be controlled from a single place.
 The setup can be run only once after creating persistent docker volumes. Manual editing afterwards is possible.
-To prepare the express setup, edit `/opt/install/config/express_setup.yaml', then run
+To prepare the express setup, make an edited copy of `/opt/install/config/express_setup.yaml' in `/opt/etc/'.
+This is a persistent volume and can be used to repeat the express configuration.
+Then run:
 
     /opt/install/scripts/express_setup.sh
 

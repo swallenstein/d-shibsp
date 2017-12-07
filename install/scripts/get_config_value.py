@@ -24,7 +24,7 @@ def main():
 
 def get_template_argument(args):
     try:
-        fd_yaml = open(args.arguments_file, 'r')
+        fd_yaml = open(args.arguments_file, 'r', encoding='utf-8-sig')
     except Exception as e:
         print('cannot open template_arguments: {}\n{}'.format(os.path.abspath(args.arguments_file), str(e)))
         exit(1)

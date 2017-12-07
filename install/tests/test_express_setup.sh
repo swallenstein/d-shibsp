@@ -6,7 +6,7 @@ proj_home=$(cd $(dirname $scriptsdir) && pwd)
 rm -rf ${proj_home}/work/etc/* 2>/dev/null || true
 mkdir -p ${proj_home}/work/etc
 
-cmd="${proj_home}/scripts/express_setup.sh
+cmd="${proj_home}/opt/bin/express_setup.sh
      -e ${proj_home}/work/etc
      -O ${proj_home}
      -s ${proj_home}/config/express_setup.yaml"
