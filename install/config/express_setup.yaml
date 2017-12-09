@@ -2,10 +2,10 @@
 # Profile: gv.at PVP 2.1
 
 httpd:
-    hostname: sp.test.portalverbund.gv.at
+    hostname: sp.testdom.local
 
 Metadata:
-    entity_category: http://www.ref.gv.at/ns/names/agiz/pvp/egovtoken
+    entity_category: http://refeds.org/category/research-and-scholarship
     xml_lang: en
     mdui_DisplayName: Shibboleth SP Test
     mdui_Description: Shibboleth SP Echo Service (Test)
@@ -22,12 +22,12 @@ Metadata:
     OrganizationUrl: https://www.testdom.local
 
 Shibboleth2:
-    entityID: https://sp.test.portalverbund.gv.at/sp
-    REMOTE_USER: persistent-id targeted-id X-PVP-USERID X-PVP-GID X-PVP-BPK
+    entityID: https://sp.testdom.local/sp
+    REMOTE_USER: eppn persistent-id targeted-id uid
     ApplicationDefaults_signing: "true"
-    SSO_discoveryURL: https://disco.test.portalverbund.gv.at/role/idp.ds
+    SSO_discoveryURL: http://idpdisco.testdom.local/role/idp.ds
     Errors_supportContact: admin@testdom.local
-    MetadataProvider_url: https://mdfeed.testdom.local/metadata.xml
+    MetadataProvider_url: http://mdfeed.testdom.local/metadata.xml
     # Select a profile that will copy files (such as attribute-map and -policy) to /etc/shibboleth.
     # See install/etc/shibboleth:
     Profile: default

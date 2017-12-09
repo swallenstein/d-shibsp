@@ -53,6 +53,7 @@ Then run:
 Check/modify the config files in /etc/shibboleth according to the documentation, in particular:
 
   - register /etc/shibboleth/export/sp_metadata.xml at the federation resource registry
+  - copy the metadata signing key to /etc/shibboleth/metadata_crt.pem
   - attribute-map.xml and attribute-policy.xml (e.g. if Profile is set to 'default')
 
 

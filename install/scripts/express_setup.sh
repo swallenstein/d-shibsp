@@ -39,6 +39,7 @@ _get_commandline_opts() {
 _default_config_for_ci() {
     # use default config if no custom config is found (only useful for CI-tests)
     if [[ ! -e $setupfile ]]; then
+        echo "No custom express setup configuration found; using /opt/install/config/express_setup.yaml"
         mkdir -p /opt/etc
         cp -n /opt/install/config/express_setup.yaml $setupfile
         cat /opt/install/etc/hosts.d/testdom.local >> /etc/hosts  # FQDNs for default config
