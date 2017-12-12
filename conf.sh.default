@@ -33,7 +33,7 @@ _set_image_and_container_name() {
     IMGID='05'
     PROJSHORT='shibsp'  # lowercase!
     SERVICEDESCRIPTION=sp.example.org  # no blanks!
-    export IMAGENAME="idn/$PROJSHORT${IMGID}"
+    export IMAGENAME="rhoerbe/$PROJSHORT${IMGID}"
     export CONTAINERNAME="${IMGID}$PROJSHORT"
 }
 

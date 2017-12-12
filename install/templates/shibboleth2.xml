@@ -14,7 +14,7 @@
 
         <Sessions lifetime="28800" timeout="3600" relayState="ss:mem"
                   checkAddress="false" handlerSSL="false" cookieProps="https"
-                  exportLocation="/GetAssertion" exportACL="0.0.0.0/0"
+                  exportLocation="/GetAssertion" exportACL="127.0.0.1/0"
                   idpHistory="true" idpHistoryDays="60">
 
             <!--
