@@ -1,33 +1,33 @@
 # Shib SP configuration for CI testing.
-# Profile: gv.at PVP 2.1
+# Profile: Research & Education
 
 httpd:
-    hostname: sp.testdom.local
+    hostname: sp.testdom.test
 
 Metadata:
     entity_category: http://refeds.org/category/research-and-scholarship
     xml_lang: en
     mdui_DisplayName: Shibboleth SP Test
     mdui_Description: Shibboleth SP Echo Service (Test)
-    mdui_Logo: https://sp.testdom.local/logo.png
+    mdui_Logo: https://sp.testdom.test/logo.png
     wantsAuthnRequestSigned: yes
     ContactPerson_support_Givenname: Franz
     ContactPerson_support_Surname: Meier
-    ContactPerson_support_Email: fxmeier@testdom.local
+    ContactPerson_support_Email: fxmeier@testdom.test
     ContactPerson_technical_Givenname: Franz
     ContactPerson_technical_Surname: Meier
-    ContactPerson_technical_Email: fxmeier@testdom.local
+    ContactPerson_technical_Email: fxmeier@testdom.test
     OrganizationName: CI-Test
     OrganizationDisplayName: Continuous Integration Testing
-    OrganizationUrl: https://www.testdom.local
+    OrganizationUrl: https://www.testdom.test
 
 Shibboleth2:
-    entityID: https://sp.testdom.local/sp
+    entityID: https://sp.testdom.test/sp
     REMOTE_USER: eppn persistent-id targeted-id uid
     ApplicationDefaults_signing: "true"
-    SSO_discoveryURL: http://idpdisco.testdom.local/role/idp.ds
-    Errors_supportContact: admin@testdom.local
-    MetadataProvider_url: http://mdfeed.testdom.local/metadata.xml
+    SSO_discoveryURL: http://idpdisco.testdom.test/role/idp.ds
+    Errors_supportContact: admin@testdom.test
+    MetadataProvider_url: http://mdfeed.testdom.test/metadata.xml
     # Select a profile that will copy files (such as attribute-map and -policy) to /etc/shibboleth.
     # See install/etc/shibboleth:
     Profile: default

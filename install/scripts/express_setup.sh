@@ -42,7 +42,7 @@ _default_config_for_ci() {
         echo "No custom express setup configuration found; using /opt/install/config/express_setup.yaml"
         mkdir -p /opt/etc
         cp -n /opt/install/config/express_setup.yaml $setupfile
-        cat /opt/install/etc/hosts.d/testdom.local >> /etc/hosts  # FQDNs for default config
+        cat /opt/install/etc/hosts.d/testdom.test >> /etc/hosts  # FQDNs for default config
     fi
 }
 

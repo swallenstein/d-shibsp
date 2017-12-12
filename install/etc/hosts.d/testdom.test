@@ -1,0 +1,6 @@
+# use these hosts for CI-testing
+127.0.1.2       mdfeed.testdom.test
+127.0.1.3       idpdisco.testdom.test
+127.0.1.4       mdq.testdom.test
+127.0.1.5       idp.testdom.test
+127.0.1.6       sp.testdom.test
