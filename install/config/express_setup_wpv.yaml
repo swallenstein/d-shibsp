@@ -1,0 +1,33 @@
+# Shib SP default configuration
+# Profile: WPV (wirtschaftsportalverbund.at)
+
+httpd:
+    hostname: sp.testdom.test
+
+Metadata:
+    entity_category: http://wirtschaftsportalverbund.at/ns/ec/attributebundle-wkis
+    xml_lang: en
+    mdui_DisplayName: Shibboleth SP Test
+    mdui_Description: Shibboleth SP Echo Service (Test)
+    mdui_Logo: https://sp.testdom.test/logo.png
+    wantsAuthnRequestSigned: yes
+    ContactPerson_support_Givenname: Franz
+    ContactPerson_support_Surname: Meier
+    ContactPerson_support_Email: fxmeier@testdom.test
+    ContactPerson_technical_Givenname: Franz
+    ContactPerson_technical_Surname: Meier
+    ContactPerson_technical_Email: fxmeier@testdom.test
+    OrganizationName: CI-Test
+    OrganizationDisplayName: Continuous Integration Testing
+    OrganizationUrl: https://www.testdom.test
+
+Shibboleth2:
+    entityID: https://sp.testdom.test/sp
+    hostname: sp.testdom.test
+    REMOTE_USER: uid gid wbpkhash persistent-id targeted-id
+    ApplicationDefaults_signing: "true"
+    SSO_discoveryURL: https://ds.test.wpv.portalverbund.at/role/idp.ds
+    Errors_supportContact: admin@testdom.test
+    MetadataProvider_url: https://mdfeed.test.wpv.portalverbund.at/metadata.xml
+    # select a profile that will copy files (such as attribute-map and -policy) to /etc/shibboleth
+    Profile: wpv
