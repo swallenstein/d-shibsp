@@ -78,6 +78,7 @@ VOLUME /etc/httpd/conf \
        /etc/httpd/conf.d \
        /etc/shibboleth \
        /opt/etc \
+       /run/httpd \
        /var/log \
        /var/www
 

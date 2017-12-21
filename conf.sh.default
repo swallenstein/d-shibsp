@@ -100,6 +100,7 @@ setup_vol_mapping() {
     map_docker_volume $mode "${CONTAINERNAME}.etc_shibboleth" '/etc/shibboleth' 'Z' $DOCKERVOL_SHORT
     map_docker_volume $mode "${CONTAINERNAME}.etc_shibboleth-ds" '/etc/shibboleth-ds' 'Z' $DOCKERVOL_SHORT
     map_docker_volume $mode "${CONTAINERNAME}.opt_etc" '/opt/etc' 'Z' $DOCKERVOL_SHORT
+    map_docker_volume $mode "${CONTAINERNAME}.run_httpd" '/run/httpd' 'Z' $DOCKERVOL_SHORT
     map_docker_volume $mode "${CONTAINERNAME}.var_log" '/var/log' 'Z' $DOCKERLOG_SHORT
     map_docker_volume $mode "${CONTAINERNAME}.var_www" '/var/www' 'Z' $DOCKERVOL_SHORT
     #map_docker_volume $mode "${CONTAINERNAME}.var_cache" '/var/cache' 'Z' $DOCKERLOG_SHORT  # provide this for faster startup - otherwise a new container might have to fetch metadata first
