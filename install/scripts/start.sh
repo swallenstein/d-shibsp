@@ -26,6 +26,7 @@ function cleanup_and_prep {
 
 function start_shibd {
     echo "starting shibd" > /var/log/startup/start.log 2>&1
+    export LD_LIBRARY_PATH=/opt/shibboleth/lib64
     /usr/sbin/shibd -u $SHIBDUSER -g root -p /var/run/shibboleth/shib.pid >> /var/log/startup/start.log 2>&1
 }
 
