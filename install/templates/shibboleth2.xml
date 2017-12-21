@@ -5,6 +5,23 @@
     xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
     clockSkew="180">
 
+    <!-- For request mapper to work the vhost needs to have in the <location> directive at least:
+              AuthType shibboleth
+              Require shibboleth
+
+    <RequestMapper type="Native">
+      <RequestMap applicationId="default">
+        <Host scheme="https" name="{{hostname}}">
+            <Path name="secure" authType="shibboleth" requireSession="true">
+                <AccessControl>
+                   <Rule require="PVP-ROLES">read</Rule>
+                </AccessControl>
+            </Path>
+        </Host>
+      </RequestMap>
+    </RequestMapper>
+    -->
+
     <ApplicationDefaults id="default" policyId="default"
                          entityID="{{entityID}}"
                          REMOTE_USER="{{REMOTE_USER}}"
