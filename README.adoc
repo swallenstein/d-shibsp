@@ -48,7 +48,7 @@ Then run:
     /opt/install/scripts/express_setup.sh
 
 
-## Shibboleth SP further configuration
+#### Shibboleth SP further configuration
 
 Check/modify the config files in /etc/shibboleth according to the documentation, in particular:
 
@@ -64,7 +64,7 @@ Check/modify the config files in /etc/shibboleth according to the documentation,
     ./dscripts/manage.sh logfiles  # list log files as configured in conf.sh (more in /var/log/)
 
 
-### Duplicating/migrating an existing configuration
+## Duplicating/migrating an existing configuration
 
 An existing configuration might be duplicated on the same or migrated to another node.
 

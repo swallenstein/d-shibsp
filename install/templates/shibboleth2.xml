@@ -35,6 +35,7 @@
 
         <!--MetadataProvider type="XML" validate="true" file="/opt/md_feed/metadata.xml"/-->
         <MetadataProvider type="XML" url="{{MetadataProvider_url}}"
+                          validate="true" reloadInterval="3600"
                           backingFilePath="metadata_backing.xml">
             <MetadataFilter type="Signature" certificate="metadata_crt.pem"/>
         </MetadataProvider>
