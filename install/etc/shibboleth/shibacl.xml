@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AccessControl type="edu.internet2.middleware.shibboleth.sp.provider.XMLAccessControl">
+    <!-- sample rule that requires the attribute givenname to be on of the values in the list -->
+    <Rule require="givenname">
+      Arya
+      Bilbo
+      Cersei
+    </Rule>
+</AccessControl>

@@ -22,6 +22,15 @@
     </RequestMapper>
     -->
 
+    <!--RequestMapper type="Native">
+      <RequestMap applicationId="default">
+        <Host scheme="https" name="{{hostname}}" authType="shibboleth" requireSession="true">
+             <AccessControlProvider uri="/etc/shibboleth/shibacl.xml" type="edu.internet2.middleware.shibboleth.sp.provider.XMLAccessControl" />
+        </Host>
+      </RequestMap>
+    </RequestMapper-->
+
+
     <ApplicationDefaults id="default" policyId="default"
                          entityID="{{entityID}}"
                          REMOTE_USER="{{REMOTE_USER}}"
@@ -34,8 +43,11 @@
                   exportLocation="/GetAssertion" exportACL="127.0.0.1/0"
                   idpHistory="true" idpHistoryDays="60">
 
-            <!--
+            <!--  fixed IDP
             <SSO entityID="https://idp.example.org/idp">SAML2</SSO>
+            -->
+            <!--  embedded DS
+            <SSO discoveryProtocol="SAMLDS" discoveryURL="https://{{hostname}}/shibboleth-ds/index.html">SAML2</SSO>
             -->
             <SSO discoveryProtocol="SAMLDS" discoveryURL="{{SSO_discoveryURL}}">SAML2</SSO>
 
