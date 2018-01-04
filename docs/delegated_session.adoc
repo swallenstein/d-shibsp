@@ -1,0 +1,39 @@
+= Delegated SP Session
+
+== Use Case
+
+A user-invoked script (or fat client) using an API protected with the Shibboleth SP requires interactive login via SAML WebSSO.
+Assuming that ECP is not available in the current setting there is a need to delegate the browser session to the script.
+This is realized with following flow.
+
+1. User invokes script S that requires API access.
+2. S creates a random value and posts it to the SP. This is using the script post_token.php.
+3. SP stores the token (deleting it after some time, like 5').
+4. S invokes the browser with a URL that causes the SP to require a valid user session.
+5. The browser is redirected to the IDP, the user authentices,
+   and the browser is returned to a success page asking the user to cles the browser window.
+6. S retrieves the browser's SP session cookie authorized with the (still fresh) token created in step 2.
+   This is using get_session.php.
+7. S can access the SP using the session cookie.
+   This is the flexibility of a bearer token.
+
+== Implementation
+
+- <doc-root>/post_token.php
+- <doc-root>/get_session.php
+- /var/www/tmp/token_dir   # persistent to keep tokes during restart
+- /scripts/purge_expired_tokens.sh
+
+Run from cron as httpd owner, e.g.:
+
+    */5 * *  *  *  root dscripts/exec.sh -n20 -u httpd20 /opt/bin/purge_expired_tokens.sh > /var/log/dscripts/purge_expired_tokens.sh  2>&1
+
+== Security Considerations
+
+- HTTPS only to protext token and session cookie
+- The server logs  must be protected, as the URLs contain the secret tokens
+
+== TODO
+
+Purge expired tokens from get_session.php. The code is implemented, but does not work from httpd.
+Message: "PHP Warning:  unlink(1): No such file or directory in /var/www/echoTestPortalverbundGvAt/html/get_session.php"

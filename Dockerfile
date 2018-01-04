@@ -27,8 +27,8 @@ ARG HTTPDUID=344005
 ARG SHIBDGID=343005
 RUN groupadd --gid $SHIBDGID shibd \
  && adduser --gid $SHIBDGID --uid $HTTPDUID $HTTPDUSER \
- && mkdir -p /var/log/httpd /var/log/shibboleth-www /run/httpd \
- && chown -R $HTTPDUID:shibd /etc/httpd /var/log/httpd /var/log/shibboleth-www /run/httpd \
+ && mkdir -p /var/log/httpd /var/log/shibboleth-www /run/httpd /var/www/tmp \
+ && chown -R $HTTPDUID:shibd /etc/httpd /var/log/httpd /var/log/shibboleth-www /run/httpd /var/www/tmp \
  && rm -rf /etc/httpd/modules /etc/httpd/logs /etc/httpd/run \
  && ln -s /usr/lib64/httpd/modules /etc/httpd/modules\
  && ln -s /var/log/httpd /etc/httpd/logs \
@@ -37,6 +37,7 @@ RUN groupadd --gid $SHIBDGID shibd \
 
 # prepare express setup from /opt/install/etc
 COPY install /opt/install
+COPY install/opt /opt
 COPY install/www/* /var/www/html/
 COPY install/scripts/* /opt/bin/
 RUN chmod +x /opt/bin/*.sh \
