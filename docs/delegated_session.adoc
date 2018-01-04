@@ -7,15 +7,16 @@ Assuming that ECP is not available in the current setting there is a need to del
 This is realized with following flow.
 
 1. User invokes script S that requires API access.
-2. S creates a random value and posts it to the SP. This is using the script post_token.php.
-3. SP stores the token (deleting it after some time, like 5').
-4. S invokes the browser with a URL that causes the SP to require a valid user session.
-5. The browser is redirected to the IDP, the user authentices,
-   and the browser is returned to a success page asking the user to cles the browser window.
+2. S creates a random value and invokes the browser with a specific URL that contains the random value as a token.
+   The path is the script post_token.php.
+3. That URL causes the SP to require a valid user session.
+4. The browser is redirected to the IDP, the user authenticates,
+   and the browser is returned to a success page asking the user to close the browser window.
+5. The SP stores the token.
 6. S retrieves the browser's SP session cookie authorized with the (still fresh) token created in step 2.
    This is using get_session.php.
 7. S can access the SP using the session cookie.
-   This is the flexibility of a bearer token.
+   (This is the flexibility of a bearer token:-)
 
 == Implementation
 
