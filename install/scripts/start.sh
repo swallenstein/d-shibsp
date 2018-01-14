@@ -35,8 +35,9 @@ function start_httpd {
     echo "starting httpd" >> /var/log/startup/start.log 2>&1
     # `docker run` 1.12.6 will reset ownership and permissions on /run/httpd; therefore it need to be done again:
     # do not start with root to avoid permission conflicts on log files
-    su - $HTTPDUSER  -c '/var/log/httpd/httpd.pid' >> /var/log/startup/start.log 2>&1
+    su - $HTTPDUSER  -c 'rm -f /run/httpd/*' >> /var/log/startup/start.log 2>&1
     su - $HTTPDUSER  -c 'httpd -DFOREGROUND -d /etc/httpd/ -f conf/httpd.conf'  >> /var/log/startup/start.log 2>&1
+    su - $HTTPDUSER  -c 'echo "httpd started with pid=$(cat /run/httpd/httpd.pid)"' >> /var/log/startup/start.log 2>&1
 }
 
 
