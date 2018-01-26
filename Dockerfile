@@ -73,6 +73,9 @@ RUN adduser --gid $SHIBDGID --uid $SHIBDUID shibd \
  && chmod 750 /var/run/shibboleth /etc/shibboleth /etc/shibboleth/*.sh
 RUN [[ "$SHIBDUSER" == 'shibd' ]] || usermod -l $SHIBDUSER shibd
 
+# run optional script (see install/build/more.sh.default)
+RUN [[ -e /opt/install/build/more.sh ]] && /opt/install/build/more.sh
+
 CMD /opt/bin/start.sh
 
 VOLUME /etc/httpd/conf \

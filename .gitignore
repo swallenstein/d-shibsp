@@ -2,5 +2,6 @@
 .idea
 conf*.sh
 !conf.sh.default
+install/build/more.sh
 work/
 x.xml
