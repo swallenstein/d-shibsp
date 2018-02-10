@@ -74,7 +74,7 @@ RUN adduser --gid $SHIBDGID --uid $SHIBDUID shibd \
 RUN [[ "$SHIBDUSER" == 'shibd' ]] || usermod -l $SHIBDUSER shibd
 
 # run optional script (see install/build/more.sh.default)
-RUN /opt/install/build/more.sh || true
+RUN [[ -e /opt/install/build/more.sh ]] && /opt/install/build/more.sh
 
 CMD /opt/bin/start.sh
 
@@ -86,6 +86,7 @@ VOLUME /etc/httpd/conf \
        /var/log \
        /var/www
 
-EXPOSE 8080
+ARG HTTPD_PORT=8080
+EXPOSE $HTTPD_PORT
 
 COPY REPO_STATUS  /opt/REPO_STATUS
