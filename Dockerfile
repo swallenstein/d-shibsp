@@ -27,8 +27,8 @@ ARG HTTPDUID=344005
 ARG SHIBDGID=343005
 RUN groupadd --gid $SHIBDGID shibd \
  && adduser --gid $SHIBDGID --uid $HTTPDUID $HTTPDUSER \
- && mkdir -p /var/log/httpd /var/log/shibboleth-www /run/httpd /var/www/tmp \
- && chown -R $HTTPDUID:shibd /etc/httpd /var/log/httpd /var/log/shibboleth-www /run/httpd /var/www/tmp \
+ && mkdir -p /var/log/httpd /var/log/shibboleth-www /var/www/tmp \
+ && chown -R $HTTPDUID:shibd /etc/httpd /var/log/httpd /var/log/shibboleth-www /var/www/tmp \
  && rm -rf /etc/httpd/modules /etc/httpd/logs /etc/httpd/run \
  && ln -s /usr/lib64/httpd/modules /etc/httpd/modules\
  && ln -s /var/log/httpd /etc/httpd/logs \
