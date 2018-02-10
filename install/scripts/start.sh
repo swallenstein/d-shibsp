@@ -25,20 +25,19 @@ function cleanup_and_prep {
 
 
 function start_shibd {
-    echo "starting shibd" > /var/log/startup/start.log 2>&1
+    echo "starting shibd"
     export LD_LIBRARY_PATH=/opt/shibboleth/lib64
     /usr/sbin/shibd -u $SHIBDUSER -g root -p /var/run/shibboleth/shib.pid
 }
 
 
 function start_httpd {
-    echo "starting httpd" >> /var/log/startup/start.log 2>&1
+    echo "starting httpd"
     # `docker run` 1.12.6 will reset ownership and permissions on /run/httpd; therefore it need to be done again:
     # do not start with root to avoid permission conflicts on log files
     su - $HTTPDUSER  -c 'rm -f /run/httpd/* 2>/dev/null || true'
     su - $HTTPDUSER  -c 'httpd -t -d /etc/httpd/ -f conf/httpd.conf'
     su - $HTTPDUSER  -c 'httpd -DFOREGROUND -d /etc/httpd/ -f conf/httpd.conf'
-    su - $HTTPDUSER  -c 'echo "httpd started with pid=$(cat /run/httpd/httpd.pid)"'
 }
 
 
