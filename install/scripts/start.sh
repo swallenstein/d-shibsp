@@ -35,9 +35,15 @@ function start_httpd {
     echo "starting httpd"
     # `docker run` 1.12.6 will reset ownership and permissions on /run/httpd; therefore it need to be done again:
     # do not start with root to avoid permission conflicts on log files
-    su - $HTTPDUSER  -c 'rm -f /run/httpd/* 2>/dev/null || true'
-    su - $HTTPDUSER  -c 'httpd -t -d /etc/httpd/ -f conf/httpd.conf'
-    su - $HTTPDUSER  -c 'httpd -DFOREGROUND -d /etc/httpd/ -f conf/httpd.conf'
+    #su - $HTTPDUSER  -c 'rm -f /run/httpd/* 2>/dev/null || true'
+    #su - $HTTPDUSER  -c 'httpd -t -d /etc/httpd/ -f conf/httpd.conf'
+    #su - $HTTPDUSER  -c 'httpd -DFOREGROUND -d /etc/httpd/ -f conf/httpd.conf'
+
+    # logging to stderr requires httpd to start as root (inside docker as of 17.05.0-ce)
+    rm -f /run/httpd/* 2>/dev/null || true
+    httpd -t -d /etc/httpd/ -f conf/httpd.conf
+    httpd -DFOREGROUND -d /etc/httpd/ -f conf/httpd.conf
+
 }
 
 
