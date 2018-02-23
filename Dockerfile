@@ -7,7 +7,7 @@ FROM rhoerbe/shib-spbase
 LABEL maintainer="Rainer Hörbe <r2h2@hoerbe.at>" \
       version="0.3.0" \
       # by default, remove all capabilities, but add those required to change the user
-      capabilities='--cap-drop=all --cap-add=setuid --cap-add=setgid --cap-add=chown --cap-add=net_raw'
+      capabilities='--cap-drop=all --cap-add=dac_override --cap-add=setuid --cap-add=setgid --cap-add=chown --cap-add=net_raw'
 
 # allow build behind firewall
 ARG HTTPS_PROXY=''
@@ -74,7 +74,7 @@ RUN adduser --gid $SHIBDGID --uid $SHIBDUID shibd \
 RUN [[ "$SHIBDUSER" == 'shibd' ]] || usermod -l $SHIBDUSER shibd
 
 # run optional script (see install/build/more.sh.default)
-RUN [[ -e /opt/install/build/more.sh ]] && /opt/install/build/more.sh
+RUN if test -e /opt/install/build/more.sh; then sh /opt/install/build/more.sh; fi
 
 CMD /opt/bin/start.sh
 
