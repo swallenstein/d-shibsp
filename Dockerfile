@@ -3,7 +3,7 @@
 #COPY install/security:shibboleth.repo /etc/yum.repos.d
 # above command cannot be executed on a system with --storage-opt=AUFS
 # therefore build shib-spbase on other system and load it:
-FROM rhoerbe/shib-spbase
+FROM rhoerbe/shibspbase
 LABEL maintainer="Rainer Hörbe <r2h2@hoerbe.at>" \
       version="0.3.0" \
       # by default, remove all capabilities, but add those required to change the user
