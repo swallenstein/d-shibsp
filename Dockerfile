@@ -38,7 +38,7 @@ RUN groupadd --gid $SHIBDGID shibd \
 # prepare express setup from /opt/install/etc
 COPY install /opt/install
 COPY install/opt /opt
-COPY install/www/* /var/www/html/
+COPY install/www/* /var/www/vhost/html/
 COPY install/scripts/* /opt/bin/
 RUN chmod +x /opt/bin/*.sh \
  && mv /etc/httpd/conf /etc/httpd/conf.orig \
