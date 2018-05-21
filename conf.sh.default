@@ -5,6 +5,7 @@ main() {
     source $SCRIPTDIR/dscripts/conf_lib.sh  $@         # load library functions
     configlib_version=2  # compatible version of conf_lib.sh
     check_version $configlib_version
+    # do_not_build $@ # uncomment this line to pull/load image
     init_sudo
     _set_volume_root
     _set_image_and_container_name
@@ -55,6 +56,8 @@ _set_buildargs() {
         --build-arg HTTPDUID=$HTTPDUID
     "
     export REPO_STATUS='True'  # if set: generate 'REPO_STATUS' file to be included in docker image at /opt/etc/
+    export MANIFEST_SCOPE='local'  # valid values: 'global', 'local'. Extension for manifest library.
+                                   # must be local for targets. Requires write access to git for 'global'.
 }
 
 

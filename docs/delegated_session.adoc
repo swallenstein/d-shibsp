@@ -1,8 +1,10 @@
 = Delegated SP Session
 
+Abstract: A script delegates the interactive IPD-login to a browser session, and can use the session later for API access.
+
 == Use Case
 
-A user-invoked script (or fat client) using an API protected with the Shibboleth SP requires interactive login via SAML WebSSO.
+A user-invoked script (or fat client) using an API protected with the Shibboleth SP that requires interactive login via SAML WebSSO.
 Assuming that ECP is not available in the current setting there is a need to delegate the browser session to the script.
 This is realized with following flow.
 

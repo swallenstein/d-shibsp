@@ -1,6 +1,9 @@
 // Stand-alone test (cleanup before and after; does not retain container or persistent volumes)
 pipeline {
     agent any
+    parameters {
+        string(defaultValue: '', description: 'Force "docker build --nocache"', name: 'nocache')
+    }
     stages {
         stage('Cleanup container, volumes') {
             steps {
@@ -14,7 +17,8 @@ pipeline {
         }
         stage('Build-Run-Test') {
             steps {
-                build job: '/shib/d-shibsp.bst'
+                build job: '/shib/d-shibsp.bst.nocache',
+                    parameters: [$class: 'StringParameterValue', name: 'nocache', value: ${params.nocache}]
             }
         }
         stage('Push -> dockerhub') {

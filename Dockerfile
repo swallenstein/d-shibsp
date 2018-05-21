@@ -5,7 +5,6 @@
 # therefore build shib-spbase on other system and load it:
 FROM rhoerbe/shibspbase
 LABEL maintainer="Rainer Hörbe <r2h2@hoerbe.at>" \
-      version="0.3.0" \
       # by default, remove all capabilities, but add those required to change the user
       capabilities='--cap-drop=all --cap-add=dac_override --cap-add=setuid --cap-add=setgid --cap-add=chown --cap-add=net_raw'
 
@@ -90,3 +89,6 @@ ARG HTTPD_PORT=8080
 EXPOSE $HTTPD_PORT
 
 COPY REPO_STATUS  /opt/REPO_STATUS
+RUN mkdir -p $HOME/.config/pip \
+ && printf "[global]\ndisable-pip-version-check = True\n" > $HOME/.config/pip/pip.conf
+COPY install/opt/bin/manifest2.sh /opt/bin/manifest2.sh

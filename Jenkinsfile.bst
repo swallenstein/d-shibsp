@@ -1,6 +1,10 @@
 // Build-Setup-Test (no prior cleanup; leave container running after test)
 pipeline {
     agent any
+    parameters {
+        string(defaultValue: '', description: 'Force "docker build --nocache"', name: 'nocache')
+        string(defaultValue: '', description: 'push docker image after build', name: 'pushimage')
+    }
     stages {
         stage('Build parent image') {
             steps {
@@ -14,7 +18,13 @@ pipeline {
                     echo 'Build image'
                     rm conf.sh 2> /dev/null || true
                     ln -sf conf.sh.default conf.sh
-                    ./dscripts/build.sh -p
+                    if [[ $pushimage ]]; then
+                        pushopt='-P'
+                    fi
+                    echo 'Build image'
+                    [[ "$pushimage" ]] && pushopt='-P'
+                    [[ "$nocache" ]] && nocacheopt='-c'
+                    ./dscripts/build.sh -p $nocacheopt $pushopt
                 '''
             }
         }
@@ -52,6 +62,14 @@ pipeline {
                 sh '''
                     sleep 1
                     ./dscripts/exec.sh -i /opt/install/tests/test_sp.sh
+                '''
+            }
+        }
+        stage('Push ') {
+            steps {
+                sh '''
+                    sleep 1
+                    ./dscripts/manage.sh -p push
                 '''
             }
         }
