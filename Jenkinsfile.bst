@@ -34,15 +34,10 @@ pipeline {
                     echo "Setup persistent volumes unless already setup"
                     ./dscripts/manage.sh statcode
                     is_running=$?
-                    if (( $is_running > 0 )); then
-                        ./dscripts/run.sh -i /opt/bin/is_initialized.sh
-                        is_init=$?
-                    else
-                        ./dscripts/exec.sh -i /opt/bin/is_initialized.sh
-                        is_init=$?
-                    fi
+                    ./dscripts/exec.sh -iR /opt/bin/is_initialized.sh
                     if (( $is_init != 0 )); then
                         >&2 echo "setup test config"
+                        ./dscripts/run.sh -iC 'cp /opt/install/config/express_setup_test.yaml /opt/install/config/express_setup.yaml'
                         ./dscripts/run.sh -iC /opt/install/scripts/express_setup.sh
                         >&2 echo "start server"
                         ./dscripts/run.sh

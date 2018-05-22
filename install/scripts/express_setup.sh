@@ -98,11 +98,12 @@ _shibboleth_create_metadata_postprocessor() {
 
 
 _postprocess_metadata() {
-    echo ">>post-processing SP metadata into ${metadata_edited}"
+    echo ">>post-processing SP metadata"
     metadata_edited_path=/etc/shibboleth/export
     mkdir -p $metadata_edited_path
     xsltproc /tmp/postprocess_metadata.xslt /tmp/sp_metadata_to_be_edited.xml \
         > $metadata_edited_path/$metadata_edited
+    echo "created ${metadata_edited_path}/${metadata_edited}"
 }
 
 
