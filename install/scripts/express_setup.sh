@@ -2,6 +2,7 @@
 
 main() {
     echo ">>running express setup"
+    _set_constant_locations
     _get_commandline_opts $@
     _default_config_for_ci
     _setup_httpd
@@ -13,6 +14,9 @@ main() {
     _fix_file_privileges
 }
 
+_set_constant_locations() {
+    confdir='/opt/install/config'
+}
 
 _get_commandline_opts() {
     metadata_edited="sp_metadata.xml"
@@ -39,9 +43,6 @@ _get_commandline_opts() {
 _default_config_for_ci() {
     # use default config if no custom config is found (only useful for CI-tests)
     if [[ ! -e $setupfile ]]; then
-        echo "${setupfile} not found; using /opt/install/config/${setupfilebasename}"
-        mkdir -p /opt/etc
-        cp -n /opt/install/config/${setupfilebasename} $setupfile
         cat /opt/install/etc/hosts.d/testdom.test >> /etc/hosts  # FQDNs for default config
     fi
 }
@@ -60,18 +61,19 @@ _setup_httpd() {
 _shibboleth_gen_keys_and_metadata() {
     entityID=$( /opt/bin/get_config_value.py $setupfile Shibboleth2 entityID )
     hostname=$( /opt/bin/get_config_value.py $setupfile httpd hostname )
-    echo "generate SP signing key pair and metadata for host=$hostname and entityID=$entityID"
     cd /etc/shibboleth
     if [[ -e sp-cert.pem ]]; then
         if [[ $keygen ]]; then
+            echo "generate SP signing key pair"
             ./keygen.sh -f -u $SHIBDUSER -g shibd -y 10 -h $hostname -e $entityID
         else
-            echo "using existing signing key (sp_cert.pem). use -k to force re-generationg of key"
+            echo "Using existing signing key (sp_cert.pem). To generate a new key restart with option -k"
         fi
     else
-        touch sp-cert.pem sp-^key.pem
+        touch sp-cert.pem sp-key.pem
         ./keygen.sh -f -u $SHIBDUSER -g shibd -y 10 -h $hostname -e $entityID
     fi
+    echo "generate SP metadata for host=$hostname and entityID=$entityID"
     ./metagen.sh -c sp-cert.pem -h $hostname -e $entityID > /tmp/sp_metadata_to_be_edited.xml
 }
 
@@ -111,6 +113,7 @@ _fix_file_privileges() {
     chown -R $HTTPDUSER:shibd /etc/httpd/ /run/httpd/ /var/log/httpd/
     chown -R $SHIBDUSER:shibd /etc/shibboleth/ /var/log/shibboleth/
     chmod -R 775  /run/httpd/
+    (( $? > 0 )) && echo "This operation requires chmod kernel capabilites for root. Start container without --cap-drop=all"
     chmod -R 755  /var/log/shibboleth/
 }
 

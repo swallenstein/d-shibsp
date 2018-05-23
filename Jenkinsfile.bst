@@ -37,8 +37,9 @@ pipeline {
                     ./dscripts/exec.sh -iR /opt/bin/is_initialized.sh
                     if (( $is_init != 0 )); then
                         >&2 echo "setup test config"
-                        ./dscripts/run.sh -iC 'cp /opt/install/config/express_setup_test.yaml /opt/install/config/express_setup.yaml'
-                        ./dscripts/run.sh -iC /opt/install/scripts/express_setup.sh
+                        ./dscripts/run.sh -iC 'cp /opt/install/config/express_setup_citest.yaml \
+                                                  /opt/etc/express_setup_citest.yaml'
+                        ./dscripts/run.sh -iC /opt/install/scripts/express_setup.sh -s express_setup_citest.yaml
                         >&2 echo "start server"
                         ./dscripts/run.sh
                         ./dscripts/manage.sh logs
