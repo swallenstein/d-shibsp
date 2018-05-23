@@ -4,7 +4,7 @@ main() {
     echo ">>running express setup"
     _set_constant_locations
     _get_commandline_opts $@
-    _default_config_for_ci
+    _default_config_for_citest
     _setup_httpd
     _shibboleth_gen_keys_and_metadata
     _setup_shibboleth2_xml
@@ -15,7 +15,7 @@ main() {
 }
 
 _set_constant_locations() {
-    confdir='/opt/install/config'
+    setupdir='/opt/install'
 }
 
 _get_commandline_opts() {
@@ -36,14 +36,14 @@ _get_commandline_opts() {
       esac
     done
     shift $((OPTIND-1))
-    setupfile=/opt/etc/$setupfilebasename
+    setupfile=${setupdir}/config/$setupfilebasename
 }
 
 
-_default_config_for_ci() {
+_default_config_for_citest() {
     # use default config if no custom config is found (only useful for CI-tests)
     if [[ ! -e $setupfile ]]; then
-        cat /opt/install/etc/hosts.d/testdom.test >> /etc/hosts  # FQDNs for default config
+        cat ${setupdir}/etc/hosts.d/testdom.test >> /etc/hosts  # FQDNs for default config
     fi
 }
 
@@ -51,9 +51,9 @@ _default_config_for_ci() {
 _setup_httpd() {
     hostname=$( /opt/bin/get_config_value.py $setupfile httpd hostname )
     echo ">>generating httpd config for ${hostname}"
-    sed -e "s/^User httpd$/User $HTTPDUSER/" /opt/install/etc/httpd/httpd.conf > /etc/httpd/conf/httpd.conf
-    sed -e "s/sp.example.org/$hostname/" /opt/install/etc/httpd/conf.d/vhost.conf > /etc/httpd/conf.d/vhost.conf
-    cp -n /opt/install/etc/httpd/conf.d/* /etc/httpd/conf.d/
+    sed -e "s/^User httpd$/User $HTTPDUSER/" ${setupdir}/etc/httpd/httpd.conf > /etc/httpd/conf/httpd.conf
+    sed -e "s/sp.example.org/$hostname/" ${setupdir}/etc/httpd/conf.d/vhost.conf > /etc/httpd/conf.d/vhost.conf
+    cp -n ${setupdir}/etc/httpd/conf.d/* /etc/httpd/conf.d/
     echo "PidFile /var/log/httpd/httpd.pid" > /etc/httpd/conf.d/pidfile.conf
 }
 
@@ -80,21 +80,21 @@ _shibboleth_gen_keys_and_metadata() {
 
 _setup_shibboleth2_xml() {
     echo ">>generating /etc/shibboleth/shibboleth2.xml"
-    /opt/bin/render_template.py $setupfile /opt/install/templates/shibboleth2.xml 'Shibboleth2' \
+    /opt/bin/render_template.py $setupfile ${setupdir}/templates/shibboleth2.xml 'Shibboleth2' \
         > /etc/shibboleth/shibboleth2.xml
 }
 
 
 _setup_shibboleth2_profile() {
     profile=$( /opt/bin/get_config_value.py ${setupfile} Shibboleth2 Profile )
-    printf ">>copying for profile ${profile} to /etc/shibboleth/:\n$(ls -l /opt/install/etc/shibboleth/$profile/*)\n"
-    cp /opt/install/etc/shibboleth/$profile/* /etc/shibboleth/
+    printf ">>copying for profile ${profile} to /etc/shibboleth/:\n$(ls -l ${setupdir}/etc/shibboleth/$profile/*)\n"
+    cp ${setupdir}/etc/shibboleth/$profile/* /etc/shibboleth/
 }
 
 
 _shibboleth_create_metadata_postprocessor() {
     echo "create XSLT for processing SP-generated metadata (/tmp/postprocess_metadata.xslt)"
-    /opt/bin/render_template.py $setupfile /opt/install/templates/postprocess_metadata.xml 'Metadata' \
+    /opt/bin/render_template.py $setupfile ${setupdir}/templates/postprocess_metadata.xml 'Metadata' \
         > /tmp/postprocess_metadata.xslt
 }
 
