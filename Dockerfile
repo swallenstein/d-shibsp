@@ -48,7 +48,7 @@ RUN chmod +x /opt/bin/*.sh \
 # require py3 + yaml for express setup
 RUN yum -y install epel-release \
  && yum -y install python34 libxslt \
- && yum clean all \
+ && yum clean all && rm -rf /var/cache/yum \
  && curl https://bootstrap.pypa.io/get-pip.py | python3.4 \
  && pip3.4 install jinja2 PyYaml
 

@@ -35,6 +35,7 @@ pipeline {
                     ./dscripts/manage.sh statcode
                     is_running=$?
                     ./dscripts/exec.sh -iR /opt/bin/is_initialized.sh
+                    is_init=$?
                     if (( $is_init != 0 )); then
                         >&2 echo "setup test config"
                         ./dscripts/run.sh -iC 'cp /opt/install/config/express_setup_citest.yaml \
