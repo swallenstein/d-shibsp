@@ -29,21 +29,23 @@ _set_volume_root() {
 
 
 _set_image_and_container_name() {
-    # IMGID qualifies image, container, user and IP adddress; this is helpful for managing
+    # imgid qualifies image, container, user and IP adddress; this is helpful for managing
     # processes on the docker host etc.
-    IMGID='05'
-    PROJSHORT='shibsp'  # lowercase!
-    SERVICEDESCRIPTION=sp.example.org  # no blanks!
-    export IMAGENAME="rhoerbe/$PROJSHORT${IMGID}"
-    export CONTAINERNAME="${IMGID}$PROJSHORT"
+    imgid='05'
+    projshort='shibsp'  # lowercase!
+    export SERVICEDESCRIPTION=sp.example.org  # no blanks!
+    [[ "$DOCKER_REGISTRY_USER" ]] || export DOCKER_REGISTRY_USER='local'
+    export IMAGENAME="${DOCKER_REGISTRY_USER}/${projshort}"
+    export CONTAINERNAME="${imgid}$projshort"
+    [[ "$DOCKER_REGISTRY" ]] || export DOCKER_REGISTRY=''  # blank for default registry
 }
 
 
 _set_users() {
-    export SHIBDUSER="shibd${IMGID}"
-    export SHIBDUID="3430${IMGID}"
-    export HTTPDUSER="httpd${IMGID}"
-    export HTTPDUID="3440${IMGID}"
+    export SHIBDUSER="shibd${imgid}"
+    export SHIBDUID="3430${imgid}"
+    export HTTPDUSER="httpd${imgid}"
+    export HTTPDUID="3440${imgid}"
     export START_AS_ROOT='True'      # 'True' e.g. for apache to fall back to www user
 }
 
@@ -84,7 +86,7 @@ create_intercontainer_network() {
     fi
     export NETWORKSETTINGS="
         --net $network
-        --ip 10.1.1.${IMGID}
+        --ip 10.1.1.${imgid}
     "
 }
 
