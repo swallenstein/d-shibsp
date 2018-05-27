@@ -62,7 +62,7 @@ ARG SHIBDUID=343005
 RUN adduser --gid $SHIBDGID --uid $SHIBDUID shibd \
  && mkdir -p /etc/shibboleth /var/log/shibboleth /var/run/shibboleth \
  && yum -y install shibboleth.x86_64 shibboleth-embedded-ds \
- && yum -y clean all \
+ && yum -y clean all && rm -rf /var/cache/yum \
  # key material is useless on an image -> remove!
  && rm -f /etc/shibboleth/sp-cert.pem /etc/shibboleth/sp-key.pem  \
  && mkdir -p /etc/shibboleth/export \
