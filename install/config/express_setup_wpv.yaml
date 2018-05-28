@@ -9,7 +9,7 @@ Metadata:
     xml_lang: en
     mdui_DisplayName: Shibboleth SP Test
     mdui_Description: Shibboleth SP Echo Service (Test)
-    mdui_Logo: https://sp.testdom.test/logo.png
+    mdui_Logo: https://www.test.wpv.portalverbund.at/images/logo.png
     wantsAuthnRequestSigned: yes
     ContactPerson_support_Givenname: Franz
     ContactPerson_support_Surname: Meier
@@ -28,6 +28,6 @@ Shibboleth2:
     ApplicationDefaults_signing: "true"
     SSO_discoveryURL: https://ds.test.wpv.portalverbund.at/role/idp.ds
     Errors_supportContact: admin@testdom.test
-    MetadataProvider_url: https://mdfeed.test.wpv.portalverbund.at/metadata.xml
+    MetadataProvider_url: http://mdfeed.test.wpv.portalverbund.at/metadata.xml
     # select a profile that will copy files (such as attribute-map and -policy) to /etc/shibboleth
-    Profile: wpv
+    Profile: at.wpv

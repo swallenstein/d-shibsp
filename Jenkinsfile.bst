@@ -1,10 +1,14 @@
 // Build-Setup-Test (no prior cleanup; leave container running after test)
 pipeline {
     agent any
+    options { disableConcurrentBuilds() }
     parameters {
-        string(defaultValue: '', description: 'Force "docker build --nocache"', name: 'nocache')
-        string(defaultValue: '', description: 'push docker image after build', name: 'pushimage')
+        string(defaultValue: '', description: 'Force "docker build --nocache" (blank or 1)', name: 'nocache')
+        string(description: 'push docker image after build (blank or 1)', name: 'pushimage')
+        string(description: 'overwrite default docker registry user', name: 'docker_registry_user')
+        string(description: 'overwrite default docker registry host', name: 'docker_registry_host')
     }
+
     stages {
         stage('Build parent image') {
             steps {
@@ -15,16 +19,18 @@ pipeline {
         stage('Build') {
             steps {
                 sh '''
-                    echo 'Build image'
+                    echo "=== Building $IMAGENAME (docker_registry_user=$docker_registry_user; docker_registry_host=$docker_registry_host"
                     rm conf.sh 2> /dev/null || true
-                    ln -sf conf.sh.default conf.sh
-                    if [[ $pushimage ]]; then
-                        pushopt='-P'
-                    fi
-                    echo 'Build image'
+                    cp conf.sh.default conf.sh
+                    echo '#!/bin/bash'  > local_conf.sh
+                    echo '[[ "'$docker_registry_user'" ]] && export DOCKER_REGISTRY_USER=$docker_registry_user'  >> local_conf.sh
+                    echo '[[ "'$docker_registry_host'" ]] && export DOCKER_REGISTRY=$docker_registry_host'  >> local_conf.sh
+                    echo 'return'  >> local_conf.sh
+                    source ./conf.sh
                     [[ "$pushimage" ]] && pushopt='-P'
                     [[ "$nocache" ]] && nocacheopt='-c'
                     ./dscripts/build.sh -p $nocacheopt $pushopt
+                    echo "=== build completed with rc $?"
                 '''
             }
         }
