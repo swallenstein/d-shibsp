@@ -3,5 +3,6 @@
 conf*.sh
 !conf.sh.default
 install/build/more.sh
+local.conf
 work/
 x.xml

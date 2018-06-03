@@ -19,13 +19,13 @@ main() {
 
 _set_volume_root() {
     # container volumes mounted to host paths, or symlinks to docker volumes
-    DOCKERVOL_SHORT='/dv'
-    DOCKERLOG_SHORT='/dl'
+    dockervol_short='/dv'
+    dockerlog_short='/dl'
     if [[ "$TRAVIS" == "true" ]] || [[ ! -z ${JENKINS_HOME+x} ]]; then
-        DOCKERVOL_SHORT='./dv';
-        DOCKERLOG_SHORT='./dl';
+        dockervol_short='./dv';
+        dockerlog_short='./dl';
     fi
-    mkdir -p $DOCKERVOL_SHORT $DOCKERLOG_SHORT
+    mkdir -p $dockervol_short $dockerlog_short
     DOCKER_VOLUME_ROOT='/var/lib/docker/volumes'  # hard coded - check for your config if applicable!
 }
 
@@ -34,12 +34,13 @@ _set_image_and_container_name() {
     # imgid qualifies image, container, user and IP adddress; this is helpful for managing
     # processes on the docker host etc.
     imgid='05'
-    projshort='shibsp'  # lowercase!
+    local projshort='shibsp'  # lowercase!
     export SERVICEDESCRIPTION=sp.example.org  # no blanks!
-    [[ "$DOCKER_REGISTRY_USER" ]] || export DOCKER_REGISTRY_USER='local'
-    export IMAGENAME="${DOCKER_REGISTRY_USER}/${projshort}"
-    export CONTAINERNAME="${imgid}$projshort"
-    [[ "$DOCKER_REGISTRY" ]] || export DOCKER_REGISTRY=''  # blank for default registry
+    #export DOCKER_REGISTRY_USER='myuser'  # overwrite default user 'local'
+    #export DOCKER_REGISTRY_HOST='localhost:5000'  # overwrite default registry host
+    set_docker_registry
+    export IMAGENAME="${DOCKER_REGISTRY_USER}/${projshort}${imgid}"
+    export CONTAINERNAME="${imgid}${projshort}"
 }
 
 
@@ -95,28 +96,28 @@ create_intercontainer_network() {
 
 setup_vol_mapping() {
     # Create docker volume (-> map_docker_volume) or map a host dir (-> map_host_directory)
-    # In both cases create a shortcut in the shortcut directory (DOCKERVOL_SHORT, DOCKERLOG_SHORT)
+    # In both cases create a shortcut in the shortcut directory (dockervol_short, dockerlog_short)
     mode=$1  # create (used by run.sh)/list (used by manage.sh)
     VOLLIST=''
     VOLMAPPING=''
     create_user $SHIBDUSER $SHIBDUID
     create_user $HTTPDUSER $HTTPDUID
 
-    map_docker_volume $mode "${CONTAINERNAME}.etc_httpd_conf" '/etc/httpd/conf' 'Z' $DOCKERVOL_SHORT
-    map_docker_volume $mode "${CONTAINERNAME}.etc_httpd_conf.d" '/etc/httpd/conf.d' 'Z' $DOCKERVOL_SHORT
-    map_docker_volume $mode "${CONTAINERNAME}.etc_shibboleth" '/etc/shibboleth' 'Z' $DOCKERVOL_SHORT
-    map_docker_volume $mode "${CONTAINERNAME}.etc_shibboleth-ds" '/etc/shibboleth-ds' 'Z' $DOCKERVOL_SHORT
-    map_docker_volume $mode "${CONTAINERNAME}.opt_etc" '/opt/etc' 'Z' $DOCKERVOL_SHORT
-    map_docker_volume $mode "${CONTAINERNAME}.run_httpd" '/run/httpd' 'Z' $DOCKERVOL_SHORT
-    map_docker_volume $mode "${CONTAINERNAME}.var_log" '/var/log' 'Z' $DOCKERLOG_SHORT
-    map_docker_volume $mode "${CONTAINERNAME}.var_www" '/var/www' 'Z' $DOCKERVOL_SHORT
-    #map_docker_volume $mode "${CONTAINERNAME}.var_cache" '/var/cache' 'Z' $DOCKERLOG_SHORT  # provide this for faster startup - otherwise a new container might have to fetch metadata first
+    map_docker_volume $mode "${CONTAINERNAME}.etc_httpd_conf" '/etc/httpd/conf' 'Z' $dockervol_short
+    map_docker_volume $mode "${CONTAINERNAME}.etc_httpd_conf.d" '/etc/httpd/conf.d' 'Z' $dockervol_short
+    map_docker_volume $mode "${CONTAINERNAME}.etc_shibboleth" '/etc/shibboleth' 'Z' $dockervol_short
+    map_docker_volume $mode "${CONTAINERNAME}.etc_shibboleth-ds" '/etc/shibboleth-ds' 'Z' $dockervol_short
+    map_docker_volume $mode "${CONTAINERNAME}.opt_etc" '/opt/etc' 'Z' $dockervol_short
+    map_docker_volume $mode "${CONTAINERNAME}.run_httpd" '/run/httpd' 'Z' $dockervol_short
+    map_docker_volume $mode "${CONTAINERNAME}.var_log" '/var/log' 'Z' $dockerlog_short
+    map_docker_volume $mode "${CONTAINERNAME}.var_www" '/var/www' 'Z' $dockervol_short
+    #map_docker_volume $mode "${CONTAINERNAME}.var_cache" '/var/cache' 'Z' $dockerlog_short  # provide this for faster startup - otherwise a new container might have to fetch metadata first
 
 
     export LOGFILES="
-        ${DOCKERLOG_SHORT}/${CONTAINERNAME}.var_log/shibboleth/shibd.log
+        ${dockerlog_short}/${CONTAINERNAME}.var_log/shibboleth/shibd.log
     "
-        #${DOCKERLOG_SHORT}/${CONTAINERNAME}.var_log/httpd/sp1TestWpvPortalverbundAt_access.log
+        #${dockerlog_short}/${CONTAINERNAME}.var_log/httpd/sp1TestWpvPortalverbundAt_access.log
 }
 
 
@@ -127,7 +128,7 @@ container_status() {
 
 
 logrotate() {
-    find $DOCKERLOG_SHORT/${CONTAINERNAME}.var_log/ -mtime +5 -exec ls -ld {} \;
+    find $dockerlog_short/${CONTAINERNAME}.var_log/ -mtime +5 -exec ls -ld {} \;
 }
 
 
