@@ -8,6 +8,7 @@ main() {
     # do_not_build $@ # uncomment this line to pull/load image
     init_sudo
     [[ -e "$SCRIPTDIR/local_conf.sh" ]] && source $SCRIPTDIR/local_conf.sh
+    echo "local_conf sourced"
     _set_volume_root
     _set_image_and_container_name
     _set_users

@@ -32,7 +32,7 @@ pipeline {
                     echo "=== Building $IMAGENAME (docker_registry_user=$docker_registry_user; docker_registry_host=$docker_registry_host"
                     rm conf.sh 2> /dev/null || true
                     cp conf.sh.default conf.sh
-                    echo '#!/bin/bash'  > local_conf.sh
+                    echo '#!/bin/bash -x'  > local_conf.sh
                     echo '[[ "'$docker_registry_user'" ]] && export DOCKER_REGISTRY_USER=$docker_registry_user'  >> local_conf.sh
                     echo '[[ "'$docker_registry_host'" ]] && export DOCKER_REGISTRY=$docker_registry_host'  >> local_conf.sh
                     echo 'return'  >> local_conf.sh
