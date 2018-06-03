@@ -37,9 +37,10 @@ pipeline {
                     echo '[[ "'$docker_registry_host'" ]] && export DOCKER_REGISTRY=$docker_registry_host'  >> local_conf.sh
                     echo 'return'  >> local_conf.sh
                     source ./conf.sh
+                    echo "conf.sh sourced"
                     [[ "$pushimage" ]] && pushopt='-P'
                     [[ "$nocache" ]] && nocacheopt='-c'
-                    ./dscripts/build.sh -p $nocacheopt $pushopt
+                    bash -x ./dscripts/build.sh -p $nocacheopt $pushopt
                     echo "=== build completed with rc $?"
                 '''
             }
