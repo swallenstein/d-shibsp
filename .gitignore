@@ -3,5 +3,9 @@
 conf*.sh
 !conf.sh.default
 install/build/more.sh
+dl/
+dv/
+out/
+REPO_STATUS
 work/
 x.xml
