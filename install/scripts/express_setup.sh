@@ -74,7 +74,11 @@ _shibboleth_gen_keys_and_metadata() {
         ./keygen.sh -f -u $SHIBDUSER -g shibd -y 10 -h $hostname -e $entityID
     fi
     echo "generate SP metadata for host=$hostname and entityID=$entityID"
-    ./metagen.sh -c sp-cert.pem -h $hostname -e $entityID > /tmp/sp_metadata_to_be_edited.xml
+    ./metagen.sh \
+        -2DL \
+        -f urn:oasis:names:tc:SAML:2.0:nameid-format:transient \
+        -f urn:oasis:names:tc:SAML:2.0:nameid-format:persistent \
+        -c sp-cert.pem -h $hostname -e $entityID > /tmp/sp_metadata_to_be_edited.xml
 }
 
 
