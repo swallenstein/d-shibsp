@@ -3,10 +3,12 @@ pipeline {
     agent any
     options { disableConcurrentBuilds() }
     parameters {
-        string(defaultValue: '', description: 'Force "docker build --nocache" (blank or 1)', name: 'nocache')
-        string(description: 'push docker image after build (blank or 1)', name: 'pushimage')
-        string(description: 'overwrite default docker registry user', name: 'docker_registry_user')
-        string(description: 'overwrite default docker registry host', name: 'docker_registry_host')
+        string(defaultValue: 'True', description: '"True": initial cleanup: remove container and volumes; otherwise leave empty', name: 'start_clean')
+        string(description: '"True": "Set --nocache for docker build; otherwise leave empty', name: 'nocache')
+        string(description: '"True": push docker image after build; otherwise leave empty', name: 'pushimage')
+        string(description: '"True": keep running after test; otherwise leave empty to delete container and volumes', name: 'keep_running')
+        string(description: '"True": overwrite default docker registry user; otherwise leave empty', name: 'docker_registry_user')
+        string(description: '"True": overwrite default docker registry host; otherwise leave empty', name: 'docker_registry_host')
     }
 
     stages {
@@ -15,8 +17,10 @@ pipeline {
                 sh '''
                     rm conf.sh 2> /dev/null || true
                     ln -sf conf.sh.default conf.sh
-                    ./dscripts/manage.sh rm 2>/dev/null || true
-                    ./dscripts/manage.sh rmvol 2>/dev/null || true
+                    if [[ "$start_clean" ]]; then
+                        ./dscripts/manage.sh rm 2>/dev/null || true
+                        ./dscripts/manage.sh rmvol 2>/dev/null || true
+                    fi
                 '''
             }
         }
@@ -83,10 +87,14 @@ pipeline {
     }
     post {
         always {
-            echo 'Remove container, volumes'
+            echo 'removing docker volumes and container '
             sh '''
-                ./dscripts/manage.sh rm 2>/dev/null || true
-                ./dscripts/manage.sh rmvol 2>/dev/null || true
+                if [[ "$keep_running" ]]; then
+                    echo "Keep container running"
+                else
+                    ./dscripts/manager.sh rm 2>/dev/null || true
+                    ./dscripts/manager.sh rmvol 2>/dev/null || true
+                fi
             '''
         }
     }
