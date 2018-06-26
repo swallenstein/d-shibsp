@@ -1,4 +1,5 @@
 // Stand-alone test (cleanup before and after; does not retain container or persistent volumes)
+// requires python3 + pyyaml + jinja2
 pipeline {
     agent any
     options { disableConcurrentBuilds() }
@@ -47,6 +48,8 @@ pipeline {
                      sh '''
                     echo "generate run script"
                     ./dscripts/run.sh -w
+                    echo "create docker-compose.yaml"
+                    dscripts/gen_compose_yaml.sh
                 '''
        }
         }
@@ -58,19 +61,20 @@ pipeline {
                     is_running=$?
                     ./dscripts/exec.sh -iR /opt/bin/is_initialized.sh
                     is_init=$?
+                    cp work/docker-compose.yaml .
                     if (( $is_init != 0 )); then
                         >&2 echo "setup test config"
                         ./dscripts/run.sh -iC 'cp /opt/install/config/express_setup_citest.yaml \
                                                   /opt/etc/express_setup_citest.yaml'
                         ./dscripts/run.sh -iC /opt/install/scripts/express_setup.sh -s express_setup_citest.yaml
                         >&2 echo "start server"
-                        ./dscripts/run.sh
+                        docker-compose up -d
                         ./dscripts/manage.sh logs
                     else
                         >&2 echo 'skipping setup - already done'
                         if (( $is_running > 0 )); then
                             >&2 echo "start server"
-                            ./dscripts/run.sh
+                            docker-compose up -d
                         fi
                     fi
                 '''
