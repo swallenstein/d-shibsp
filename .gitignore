@@ -2,7 +2,7 @@
 .idea
 conf*.sh
 !conf.sh.default
-docker-compose.yaml
+docker-compose*.yaml
 install/build/more.sh
 dl/
 dv/

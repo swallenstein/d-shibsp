@@ -1,15 +1,20 @@
-#FROM centos:centos7
-#RUN yum -y install curl httpd ip lsof mod_php mod_ssl net-tools
-#COPY install/security:shibboleth.repo /etc/yum.repos.d
-# above command cannot be executed on a system with --storage-opt=AUFS
-# therefore build shib-spbase on other system and load it:
-FROM rhoerbe/shibspbase
+FROM centos:centos7
 LABEL maintainer="Rainer Hörbe <r2h2@hoerbe.at>" \
-      # by default, remove all capabilities, but add those required to change the user
       capabilities='--cap-drop=all --cap-add=dac_override --cap-add=setuid --cap-add=setgid --cap-add=chown --cap-add=net_raw'
 
 # allow build behind firewall
 ARG HTTPS_PROXY=''
+ARG TIMEZONE='UTC'
+RUN ln -sf /usr/share/zoneinfo/$TIMEZONE /etc/localtime
+
+RUN yum -y update \
+ && yum -y install curl httpd ip lsof mod_php mod_ssl net-tools \
+ && yum -y install curl git iproute lsof net-tools openssl tar unzip which wget \
+ && yum -y install yum install https://centos7.iuscommunity.org/ius-release.rpm \
+ && yum -y install python36u python36u-pip \
+ && yum clean all && rm -rf /var/cache/yum
+COPY install/security:shibboleth.repo /etc/yum.repos.d
+# above command cannot be executed on a system with --storage-opt=AUFS (as of 2016-04)
 
 RUN echo $'export LD_LIBRARY_PATH=/opt/shibboleth/lib64:$LD_LIBRARY_PATH\n' > /etc/sysconfig/shibd \
  && chmod +x /etc/sysconfig/shibd \
@@ -17,13 +22,13 @@ RUN echo $'export LD_LIBRARY_PATH=/opt/shibboleth/lib64:$LD_LIBRARY_PATH\n' > /e
  # therefore set permissions always after yum update
  && yum update -y
 
-# Run as a non-root user, separate uids for httpd and shibd, with common group shibd.
+# Run https and shibd as a non-root user, separate uids for httpd and shibd, with common group shibd.
 # Allow httpd/mod_shib access to /var/run/shibboleth and /etc/shibboleth using group shibd
 # Prevent yum to create default uid for shibd to control user mapping between host and container
 
-ARG HTTPDUSER=httpd
-ARG HTTPDUID=344005
-ARG SHIBDGID=343005
+ENV HTTPDUSER httpd
+ENV HTTPDUID 344005
+ENV SHIBDGID 343005
 RUN groupadd --gid $SHIBDGID shibd \
  && adduser --gid $SHIBDGID --uid $HTTPDUID $HTTPDUSER \
  && mkdir -p /var/log/httpd /var/log/shibboleth-www /var/www/tmp \
@@ -57,8 +62,8 @@ RUN mkdir /var/log/startup \
 
 # First add user "shibd" and install shibboleth SP, then rename to "$SHIBUSER".
 # Set permissions for shibd user to write to /var/cache and /var/run /var/log
-ARG SHIBDUSER=shibd
-ARG SHIBDUID=343005
+ENV SHIBDUSER shibd
+ENV SHIBDUID 343005
 RUN adduser --gid $SHIBDGID --uid $SHIBDUID shibd \
  && mkdir -p /etc/shibboleth /var/log/shibboleth /var/run/shibboleth \
  && yum -y install shibboleth.x86_64 shibboleth-embedded-ds \
@@ -88,7 +93,9 @@ VOLUME /etc/httpd/conf \
 ARG HTTPD_PORT=8080
 EXPOSE $HTTPD_PORT
 
-COPY REPO_STATUS  /opt/REPO_STATUS
-RUN mkdir -p $HOME/.config/pip \
+RUN ln -sf /usr/bin/pip3.6 /usr/bin/pip3 \
+ && ln -sf /usr/bin/python3.6 /usr/bin/python3 \
+ && pip3 install jinja2 PyYaml \
+ && mkdir -p $HOME/.config/pip \
  && printf "[global]\ndisable-pip-version-check = True\n" > $HOME/.config/pip/pip.conf
 COPY install/opt/bin/manifest2.sh /opt/bin/manifest2.sh

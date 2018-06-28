@@ -24,7 +24,7 @@ This is realized with following flow.
 
 - <doc-root>/post_token.php
 - <doc-root>/get_session.php
-- /var/www/tmp/token_dir   # persistent to keep tokes during restart
+- /var/www/tmp/token_dir   # persistent to keep token s during restart
 - /scripts/purge_expired_tokens.sh
 
 Run from cron as httpd owner, e.g.:

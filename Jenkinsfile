@@ -5,32 +5,14 @@ pipeline {
     options { disableConcurrentBuilds() }
     parameters {
         string(defaultValue: 'True', description: '"True": initial cleanup: remove container and volumes; otherwise leave empty', name: 'start_clean')
-        string(description: '"True": "Set --nocache for docker build; otherwise leave empty', name: 'nocache')
-        string(description: '"True": push docker image after build; otherwise leave empty', name: 'pushimage')
-        string(description: '"True": keep running after test; otherwise leave empty to delete container and volumes', name: 'keep_running')
-        string(description: '"True": overwrite default docker registry user; otherwise leave empty', name: 'docker_registry_user')
-        string(description: '"True": overwrite default docker registry host; otherwise leave empty', name: 'docker_registry_host')
+        string(defaultValue: '', description: '"True": "Set --nocache for docker build; otherwise leave empty', name: 'nocache')
+        string(defaultValue: '', description: '"True": push docker image after build; otherwise leave empty', name: 'pushimage')
+        string(defaultValue: '', description: '"True": keep running after test; otherwise leave empty to delete container and volumes', name: 'keep_running')
+        string(defaultValue: '', description: '"True": overwrite default docker registry user; otherwise leave empty', name: 'docker_registry_user')
+        string(defaultValue: '', description: '"True": overwrite default docker registry host; otherwise leave empty', name: 'docker_registry_host')
     }
 
     stages {
-        stage('Cleanup container, volumes') {
-            steps {
-                sh '''
-                    rm conf.sh 2> /dev/null || true
-                    ln -sf conf.sh.default conf.sh
-                    if [[ "$start_clean" ]]; then
-                        ./dscripts/manage.sh rm 2>/dev/null || true
-                        ./dscripts/manage.sh rmvol 2>/dev/null || true
-                    fi
-                '''
-            }
-        }
-        stage('Build parent image') {
-            steps {
-                echo 'Job d-shibspbase: Building parent image ..'
-                build job: 'd-shibspbase'
-            }
-        }
         stage('Build') {
             steps {
                 echo "==========================="
@@ -41,42 +23,45 @@ pipeline {
                     set +x
                     echo [[ "$docker_registry_user" ]] && echo "DOCKER_REGISTRY_USER $docker_registry_user"  > local.conf
                     echo [[ "$docker_registry_host" ]] && echo "DOCKER_REGISTRY_HOST $docker_registry_host"  >> local.conf
-                    [[ "$pushimage" ]] && pushopt='-P'
+                    [[ "$pushimage" ]] && pushopt='-Pl'
                     [[ "$nocache" ]] && nocacheopt='-c'
                     ./dscripts/build.sh -p $nocacheopt $pushopt
                 '''
-                     sh '''
+                sh '''
                     echo "generate run script"
                     ./dscripts/run.sh -w
+                    echo "create docker-compose-setup.yaml"
+                    dscripts/gen_compose_yaml.sh -C docker-compose-setup.template
+                    mv work/docker-compose.yaml docker-compose-setup.yaml
                     echo "create docker-compose.yaml"
                     dscripts/gen_compose_yaml.sh
+                    mv work/docker-compose.yaml .
                 '''
-       }
+            }
+        }
+        stage('Cleanup container, volumes') {
+            steps {
+                sh '''
+                    rm conf.sh 2> /dev/null || true
+                    ln -sf conf.sh.default conf.sh
+                    if [[ "$start_clean" ]]; then
+                        docker-compose down --volumes
+                    fi
+                '''
+            }
         }
         stage('Setup + Run') {
             steps {
                 sh '''#!/bin/bash
-                    echo "Setup persistent volumes unless already setup"
-                    ./dscripts/manage.sh statcode
-                    is_running=$?
-                    ./dscripts/exec.sh -iR /opt/bin/is_initialized.sh
-                    is_init=$?
-                    cp work/docker-compose.yaml .
-                    if (( $is_init != 0 )); then
-                        >&2 echo "setup test config"
-                        ./dscripts/run.sh -iC 'cp /opt/install/config/express_setup_citest.yaml \
-                                                  /opt/etc/express_setup_citest.yaml'
-                        ./dscripts/run.sh -iC /opt/install/scripts/express_setup.sh -s express_setup_citest.yaml
-                        >&2 echo "start server"
-                        docker-compose up -d
-                        ./dscripts/manage.sh logs
-                    else
-                        >&2 echo 'skipping setup - already done'
-                        if (( $is_running > 0 )); then
-                            >&2 echo "start server"
-                            docker-compose up -d
-                        fi
-                    fi
+                    >&2 echo "setup test config"
+                    docker-compose -f docker-compose-setup.yaml run --rm shibsp \
+                        cp /opt/install/config/express_setup_citest.yaml /opt/etc/express_setup_citest.yaml
+                    docker-compose -f docker-compose-setup.yaml run --rm shibsp \
+                        /opt/install/scripts/express_setup.sh -s express_setup_citest.yaml
+                    >&2 echo "start server"
+                    docker-compose up -d
+                    sleep 2
+                    docker-compose logs shibsp
                 '''
             }
         }
@@ -84,20 +69,19 @@ pipeline {
             steps {
                 sh '''
                     sleep 1
-                    ./dscripts/exec.sh -i /opt/install/tests/test_sp.sh
+                    docker-compose exec -T shibsp /opt/install/tests/test_sp.sh
                 '''
             }
         }
     }
     post {
         always {
-            echo 'removing docker volumes and container '
             sh '''
                 if [[ "$keep_running" ]]; then
-                    echo "Keep container running"
+                    echo 'Keep container running'
                 else
-                    ./dscripts/manager.sh rm 2>/dev/null || true
-                    ./dscripts/manager.sh rmvol 2>/dev/null || true
+                    echo 'removing docker volumes and container'
+                    docker-compose down --volumes 2>/dev/null || true
                 fi
             '''
         }
