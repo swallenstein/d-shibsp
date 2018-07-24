@@ -51,7 +51,7 @@ _default_config_for_citest() {
 _setup_httpd() {
     hostname=$( /opt/bin/get_config_value.py $setupfile httpd hostname )
     echo ">>generating httpd config for ${hostname}"
-    sed -e "s/^User httpd$/User $HTTPDUSER/" ${setupdir}/etc/httpd/httpd.conf > /etc/httpd/conf/httpd.conf
+    cp /opt/install/etc/httpd/httpd.conf /etc/httpd/conf/httpd.conf
     sed -e "s/sp.example.org/$hostname/" ${setupdir}/etc/httpd/conf.d/vhost.conf > /etc/httpd/conf.d/vhost.conf
     cp -n ${setupdir}/etc/httpd/conf.d/* /etc/httpd/conf.d/
     echo "PidFile /var/log/httpd/httpd.pid" > /etc/httpd/conf.d/pidfile.conf
@@ -65,13 +65,13 @@ _shibboleth_gen_keys_and_metadata() {
     if [[ -e sp-cert.pem ]]; then
         if [[ $keygen ]]; then
             echo "generate SP signing key pair"
-            ./keygen.sh -f -u $SHIBDUSER -g shibd -y 10 -h $hostname -e $entityID
+            ./keygen.sh -f -u shibd -g shibd -y 10 -h $hostname -e $entityID
         else
             echo "Using existing signing key (sp_cert.pem). To generate a new key restart with option -k"
         fi
     else
         touch sp-cert.pem sp-key.pem
-        ./keygen.sh -f -u $SHIBDUSER -g shibd -y 10 -h $hostname -e $entityID
+        ./keygen.sh -f -u shibd -g shibd -y 10 -h $hostname -e $entityID
     fi
     echo "generate SP metadata for host=$hostname and entityID=$entityID"
     ./metagen.sh \
@@ -114,8 +114,8 @@ _postprocess_metadata() {
 
 
 _fix_file_privileges() {
-    chown -R $HTTPDUSER:shibd /etc/httpd/ /run/httpd/ /var/log/httpd/
-    chown -R $SHIBDUSER:shibd /etc/shibboleth/ /var/log/shibboleth/
+    chown -R httpd:shibd /etc/httpd/ /run/httpd/ /var/log/httpd/
+    chown -R shibd:shibd /etc/shibboleth/ /var/log/shibboleth/
     chmod -R 775  /run/httpd/
     (( $? > 0 )) && echo "This operation requires chmod kernel capabilites for root. Start container without --cap-drop=all"
     chmod -R 755  /var/log/shibboleth/

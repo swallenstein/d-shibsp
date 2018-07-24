@@ -8,11 +8,9 @@ services:
       x.service: {{ servicename }}
     restart: unless-stopped
     environment:
-        - SHIBDUSER={{ shibduser }}
-        - HTTPDUSER={{ httpduser }}
         - LOGPURGEFILES
     #ports:
-    #  - "80:8080"    
+    #  - "8080:8080"
     networks:
       dockernet:
         ipv4_address: {{ ipv4_address }} 

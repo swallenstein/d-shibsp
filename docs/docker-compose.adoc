@@ -1,0 +1,16 @@
+= Running images with docker-compose
+
+To create a docker-compose file using the configuration in conf.sh:
+
+    cp template/conf.yaml.template .
+    cp template/docker-compose.template
+    #customize conf.yaml.template: add varaibles to be rendered (remove those that are constant)
+    run gen_compose_yaml.sh
+    # if project instances do not need to change the result:
+    mv docker-compose.yaml docker-compose.yaml.default
+
+
+== Caveat!
+
+docker-compose always prefixes names of docker volumes with the current directory when createing,
+whatever external or name parameters are provided. This is currently incomplatible with dscripts/run.sh.

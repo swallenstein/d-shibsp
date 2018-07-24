@@ -91,8 +91,6 @@ setup_vol_mapping() {
     mode=$1  # create (used by run.sh)/list (used by manage.sh)
     VOLLIST=''
     VOLMAPPING=''
-    create_user $SHIBDUSER $SHIBDUID
-    create_user $HTTPDUSER $HTTPDUID
 
     map_docker_volume $mode "${CONTAINERNAME}.etc_httpd_conf" '/etc/httpd/conf' 'Z' $dockervol_short
     map_docker_volume $mode "${CONTAINERNAME}.etc_httpd_conf.d" '/etc/httpd/conf.d' 'Z' $dockervol_short

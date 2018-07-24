@@ -20,14 +20,14 @@ function cleanup_and_prep {
     # Make sure we're not confused by old, incompletely-shutdown shibd or httpd
     # context after restarting the container. httpd/shibd won't start correctly if thinking it is already running.
     rm -rf /var/lock/subsys/shibd
-    su - $SHIBDUSER  -c '[ -e /run/shibboleth/shibd.sock ] && rm /run/shibboleth/shibd.*'
+    su - shibd  -c '[ -e /run/shibboleth/shibd.sock ] && rm /run/shibboleth/shibd.*'
 }
 
 
 function start_shibd {
     echo "starting shibd"
     export LD_LIBRARY_PATH=/opt/shibboleth/lib64
-    /usr/sbin/shibd -u $SHIBDUSER -g root -p /var/run/shibboleth/shib.pid
+    /usr/sbin/shibd -u shibd -g root -p /var/run/shibboleth/shib.pid
 }
 
 
