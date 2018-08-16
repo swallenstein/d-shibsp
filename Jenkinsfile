@@ -15,12 +15,12 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                echo "==========================="
-                sh 'set +x; source ./conf.sh; echo "Building $IMAGENAME"'
                 echo "Pipeline args: nocache=$nocache; pushimage=$pushimage; docker_registry_user=$docker_registry_user; docker_registry_host=$docker_registry_host"
                 echo "==========================="
                 sh '''
                     set +x
+                    rm conf.sh 2> /dev/null || true
+                    cp conf.sh.default conf.sh
                     echo [[ "$docker_registry_user" ]] && echo "DOCKER_REGISTRY_USER $docker_registry_user"  > local.conf
                     echo [[ "$docker_registry_host" ]] && echo "DOCKER_REGISTRY_HOST $docker_registry_host"  >> local.conf
                     [[ "$pushimage" ]] && pushopt='-Pl'

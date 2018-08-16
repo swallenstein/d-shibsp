@@ -10,8 +10,8 @@ RUN ln -sf /usr/share/zoneinfo/$TIMEZONE /etc/localtime
 RUN yum -y update \
  && yum -y install curl httpd ip lsof mod_php mod_ssl net-tools \
  && yum -y install curl git iproute lsof net-tools openssl tar unzip which wget \
- && yum -y install yum install https://centos7.iuscommunity.org/ius-release.rpm \
- && yum -y install python36u python36u-pip \
+ #&& yum -y install yum install https://centos7.iuscommunity.org/ius-release.rpm \
+ #&& yum -y install python36u python36u-pip \
  && yum clean all && rm -rf /var/cache/yum
 COPY install/security:shibboleth.repo /etc/yum.repos.d
 # above command cannot be executed on a system with --storage-opt=AUFS (as of 2016-04)
@@ -50,13 +50,15 @@ RUN chmod +x /opt/bin/*.sh \
  && mkdir -p /etc/httpd/conf /etc/httpd/conf.d
 
 
-# require py3 + yaml for express setup
+# require py3 + yaml for express setup, manifest2.sh
 RUN yum -y install epel-release \
  && yum -y install python34 libxslt \
  && yum clean all && rm -rf /var/cache/yum \
+ && ln -sf /usr/bin/python3.4 /usr/bin/python3 \
  && curl https://bootstrap.pypa.io/get-pip.py | python3.4 \
- && pip3.4 install jinja2 PyYaml
-
+ && pip3.4 install jinja2 PyYaml \
+ && mkdir -p $HOME/.config/pip \
+ && printf "[global]\ndisable-pip-version-check = True\n" > $HOME/.config/pip/pip.conf
 RUN mkdir /var/log/startup \
  && chmod 777 /var/log/startup  # must be writeable by root
 
@@ -93,9 +95,4 @@ VOLUME /etc/httpd/conf \
 ARG HTTPD_PORT=8080
 EXPOSE $HTTPD_PORT
 
-RUN ln -sf /usr/bin/pip3.6 /usr/bin/pip3 \
- && ln -sf /usr/bin/python3.6 /usr/bin/python3 \
- && pip3 install jinja2 PyYaml \
- && mkdir -p $HOME/.config/pip \
- && printf "[global]\ndisable-pip-version-check = True\n" > $HOME/.config/pip/pip.conf
 COPY install/opt/bin/manifest2.sh /opt/bin/manifest2.sh
