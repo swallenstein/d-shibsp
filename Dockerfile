@@ -1,4 +1,5 @@
-FROM centos:centos7
+FROM intra/centos7_base
+# intra/centos7_base is a synonym to centos:7
 LABEL maintainer="Rainer Hörbe <r2h2@hoerbe.at>" \
       capabilities='--cap-drop=all --cap-add=dac_override --cap-add=setuid --cap-add=setgid --cap-add=chown --cap-add=net_raw'
 

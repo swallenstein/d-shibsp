@@ -19,17 +19,10 @@ pipeline {
                 echo "==========================="
                 sh '''
                     set +x
-                    rm conf.sh 2> /dev/null || true
-                    cp conf.sh.default conf.sh
-                    echo [[ "$docker_registry_user" ]] && echo "DOCKER_REGISTRY_USER $docker_registry_user"  > local.conf
-                    echo [[ "$docker_registry_host" ]] && echo "DOCKER_REGISTRY_HOST $docker_registry_host"  >> local.conf
-                    [[ "$pushimage" ]] && pushopt='-Pl'
                     [[ "$nocache" ]] && nocacheopt='-c'
-                    ./dscripts/build.sh -p $nocacheopt $pushopt
+                    ./dscripts/build.sh -p $nocacheopt
                 '''
                 sh '''
-                    echo "generate run script"
-                    ./dscripts/run.sh -w
                     echo "create docker-compose-setup.yaml"
                     dscripts/gen_compose_yaml.sh -C docker-compose-setup.template
                     mv work/docker-compose.yaml docker-compose-setup.yaml
@@ -71,6 +64,15 @@ pipeline {
                     sleep 1
                     docker-compose exec -T shibsp /opt/install/tests/test_sp.sh
                 '''
+            }
+        }
+        stage('Push ') {
+            when {
+                expression { params.pushimage?.trim() != '' }
+            }
+            steps {
+                echo 'pushing pyff to default registry'
+                sh '[[ "$pushimage" ]] && docker-compose -f dc.yaml push pyff'
             }
         }
     }

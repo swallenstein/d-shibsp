@@ -5,29 +5,28 @@ Abstract: A script delegates the interactive IPD-login to a browser session, and
 == Use Case
 
 A user-invoked script (or fat client) using an API protected with the Shibboleth SP that requires interactive login via SAML WebSSO.
-Assuming that ECP is not available in the current setting there is a need to delegate the browser session to the script.
+Assuming that ECP is not available in the deployment there is a need to delegate the browser session to the script.
 This is realized with following flow.
 
 1. User invokes script S that requires API access.
-2. S creates a random value and invokes the browser with a specific URL that contains the random value as a token.
+2. S creates a random value and invokes the system browser with a SP-protected URL passing the random value as a token.
    The path is the script post_token.php.
 3. That URL causes the SP to require a valid user session.
 4. The browser is redirected to the IDP, the user authenticates,
    and the browser is returned to a success page asking the user to close the browser window.
 5. The SP stores the token.
 6. S retrieves the browser's SP session cookie authorized with the (still fresh) token created in step 2.
-   This is using get_session.php.
+   This is done using get_session.php.
 7. S can access the SP using the session cookie.
    (This is the flexibility of a bearer token:-)
 
 == Implementation
 
-- <doc-root>/post_token.php
-- <doc-root>/get_session.php
-- /var/www/tmp/token_dir   # persistent to keep token s during restart
-- /scripts/purge_expired_tokens.sh
-
-Run from cron as httpd owner, e.g.:
+- The SP installs following scripts:
+    - <doc-root>/post_token.php
+    - <doc-root>/get_session.php
+- /var/www/tmp/token_dir   # make persistent to keep tokens during restart
+- /scripts/purge_expired_tokens.sh # Run from cron as httpd owner, e.g.:
 
     */5 * *  *  *  root dscripts/exec.sh -n20 -u httpd20 /opt/bin/purge_expired_tokens.sh > /var/log/dscripts/purge_expired_tokens.sh  2>&1
 

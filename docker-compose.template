@@ -23,14 +23,6 @@ services:
         - {{ containername }}.run_httpd:/run/httpd:Z
         - {{ containername }}.var_log:/var/log:Z
         - {{ containername }}.var_www:/var/www:Z
-    cap_drop:
-      - ALL
-    cap_add:
-      - dac_override
-      - setuid
-      - setgid
-      - chown
-      - net_raw
 networks:
   dockernet:
     external: true
