@@ -1,12 +1,8 @@
 .DS_Store
 .idea
-conf*.sh
-!conf.sh.default
+dc*.yaml
 docker-compose*.yaml
 install/build/more.sh
-dl/
-dv/
 out/
-REPO_STATUS
 work/
 x.xml
