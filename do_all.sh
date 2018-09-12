@@ -1,42 +1,57 @@
 #!/usr/bin/env bash
 
 main() {
-    do_all_dir=$(cd $(dirname $BASH_SOURCE[0]) && pwd)
-    _get_commandline_opts $@
+    _get_commandline_opts "$@"
     _exec_them_all
 }
 
 
 _get_commandline_opts() {
     wait=0
-    while getopts ":rw:" opt; do
+    while getopts ":dlrw:" opt; do
       case $opt in
-        r) cmdopt='run';;
+        d) dryrun='True';;
         w) wait=$OPTARG;;
-        *) echo "usage: $0 -b | -r ] [-w seconds] [conf-number ]..
-             -r  docker-compose down/up -d
+        *) echo "usage: $0 -l | -r ] [-w seconds] command
+             execute command for all dc*.y*ml files in the current directory
+             -d  dryrun: print docker commands instead of executing them
              -w integer  number of seconds to wait in between commands; default: no wait
+           command is one of:
+             config: validate config
+             listsrv: list configured volumes (depends on docker-compose version)
+             listvol: list configured volumes (depends on docker-compose version)
+             logs: 'docker-compose logs'
+             restart alias 'docker-compose down/up -d'
            "; exit 0;;
       esac
     done
     shift $((OPTIND-1))
-    items=$@
+    case "$1" in
+       config) cmdopt='config --quiet';;
+       listsrv) cmdopt='config --services';;
+       listvol) cmdopt='config --volumes';;
+       logs) cmdopt='logs';;
+       restart) cmdopt='restart';;
+       *) echo "command must be either logs or restart"; exit 1;;
+    esac
 }
 
 
 _exec_them_all() {
-    (cd $do_all_dir
-     for n in $items; do 
-         cmd="docker-compose -f dc${n}.yaml down && docker-compose -f dc${n}.yaml up -d"
-         if [[ $dryrun ]]; then
-             echo $cmd
-         else
-             $cmd
-             sleep $wait
-         fi
-     done
-    )
+    for f in dc[0-9][0-9].y*ml; do
+        case "$cmdopt" in
+           restart) cmd="docker-compose -f ${f} down && docker-compose -f ${f} up -d";;
+           *) cmd="docker-compose -f ${f} ${cmdopt}";;
+        esac
+        if [[ "${dryrun}" ]]; then
+            echo "${cmd}"
+        else
+            $cmd
+            sleep $wait
+        fi
+    done
 }
 
 
-main $@
+main "$@"
+
