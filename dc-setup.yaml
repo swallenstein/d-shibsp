@@ -1,12 +1,12 @@
 version: "2"
 services:
   shibsp:
-    image: local/shibsp
+    image: r2h2/shibsp
     container_name: shibsp
     hostname: shibsp
     labels:
       x.service: sp.example.org
-    restart: unless-stopped
+    restart: "no"
     environment:
         - SHIBDUSER=shibd
         - HTTPDUSER=httpd
